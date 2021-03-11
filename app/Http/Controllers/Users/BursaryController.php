@@ -13,6 +13,21 @@ class BursaryController extends Controller
 {
 
 
+    public function reportCRUD(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'programme_type' => 'required',
+            'type' => 'required',
+            'startDate' => 'required',
+            'endDate' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'all fields are required!'], 401);
+        }
+
+        
+    }
+    
 
     public function allPayment(Request $request)
     {
