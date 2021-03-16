@@ -22,6 +22,7 @@ class CreateTransactionsTable extends Migration
             $table->string('details')->nullable();
             $table->string('reference')->nullable();
             $table->foreignId('application_id')->nullable();
+            $table->string('session')->nullable();
             $table->longText('transactionId',191)->unique()->nullable();
             //update
             $table->string('rrr')->nullable()->unique();///remita
