@@ -1,352 +1,181 @@
-<!doctype html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Engagement Email</title>
-    <style>
-        /* -------------------------------------
-            GLOBAL RESETS
-        ------------------------------------- */
-        img {
-            border: none;
-            -ms-interpolation-mode: bicubic;
-            max-width: 100%; }
+<?php
+header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+?>
 
-        body {
-            background-color: #f6f6f6;
-            font-family: sans-serif;
-            -webkit-font-smoothing: antialiased;
-            font-size: 14px;
-            line-height: 1.4;
-            margin: 0;
-            padding: 0;
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%; }
 
-        table {
-            border-collapse: separate;
-            mso-table-lspace: 0pt;
-            mso-table-rspace: 0pt;
-            width: 100%; }
-        table td {
-            font-family: sans-serif;
-            font-size: 14px;
-            vertical-align: top; }
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-        /* -------------------------------------
-            BODY & CONTAINER
-        ------------------------------------- */
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-        .body {
-            background-color: #f6f6f6;
-            width: 100%; }
+    <head>
 
-        /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
-        .container {
-            display: block;
-            Margin: 0 auto !important;
-            /* makes it centered */
-            max-width: 580px;
-            padding: 10px;
-            width: 580px; }
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        /* This should also be a block element, so that it will fill 100% of the .container */
-        .content {
-            box-sizing: border-box;
-            display: block;
-            Margin: 0 auto;
-            max-width: 580px;
-            padding: 10px; }
+        <title>Redeemer's University Admission Letter</title>
 
-        /* -------------------------------------
-            HEADER, FOOTER, MAIN
-        ------------------------------------- */
-        .main {
-            background: #ffffff;
-            border-radius: 3px;
-            width: 100%; }
+        <style type="text/css">
 
-        .wrapper {
-            box-sizing: border-box;
-            padding: 20px; }
+            body,td,th {
 
-        .content-block {
-            padding-bottom: 10px;
-            padding-top: 10px;
-        }
+                font-family: Arial, Helvetica, sans-serif;
 
-        .footer {
-            clear: both;
-            Margin-top: 10px;
-            text-align: center;
-            width: 100%; }
-        .footer td,
-        .footer p,
-        .footer span,
-        .footer a {
-            color: #999999;
-            font-size: 12px;
-            text-align: center; }
+                font-size: 14px;
 
-        /* -------------------------------------
-            TYPOGRAPHY
-        ------------------------------------- */
-        h1,
-        h2,
-        h3,
-        h4 {
-            color: #000000;
-            font-family: sans-serif;
-            font-weight: 400;
-            line-height: 1.4;
-            margin: 0;
-            Margin-bottom: 30px; }
+                text-align: justify;
 
-        h1 {
-            font-size: 35px;
-            font-weight: 300;
-            text-align: center;
-            text-transform: capitalize; }
+            }
 
-        p,
-        ul,
-        ol {
-            font-family: sans-serif;
-            font-size: 14px;
-            font-weight: normal;
-            margin: 0;
-            Margin-bottom: 15px; }
-        p li,
-        ul li,
-        ol li {
-            list-style-position: inside;
-            margin-left: 5px; }
+            .run {
 
-        a {
-            color: #3498db;
-            text-decoration: underline; }
+                color: #90C;
 
-        /* -------------------------------------
-            BUTTONS
-        ------------------------------------- */
-        .btn {
-            box-sizing: border-box;
-            width: 100%; }
-        .btn > tbody > tr > td {
-            padding-bottom: 15px; }
-        .btn table {
-            width: auto; }
-        .btn table td {
-            background-color: #ffffff;
-            border-radius: 5px;
-            text-align: center; }
-        .btn a {
-            background-color: #ffffff;
-            border: solid 1px #3498db;
-            border-radius: 5px;
-            box-sizing: border-box;
-            color: #3498db;
-            cursor: pointer;
-            display: inline-block;
-            font-size: 14px;
-            font-weight: bold;
-            margin: 0;
-            padding: 12px 25px;
-            text-decoration: none;
-            text-transform: capitalize; }
+                text-align: right;
 
-        .btn-primary table td {
-            background-color: #3498db; }
+            }
 
-        .btn-primary a {
-            background-color: #3498db;
-            border-color: #3498db;
-            color: #ffffff; }
+            h2 {
 
-        /* -------------------------------------
-            OTHER STYLES THAT MIGHT BE USEFUL
-        ------------------------------------- */
-        .last {
-            margin-bottom: 0; }
+                font-size: 24px;
 
-        .first {
-            margin-top: 0; }
+                color: #009;
 
-        .align-center {
-            text-align: center; }
+            }
 
-        .align-right {
-            text-align: right; }
+            .new {
 
-        .align-left {
-            text-align: left; }
+                font-weight: bold;
 
-        .clear {
-            clear: both; }
+            }
 
-        .mt0 {
-            margin-top: 0; }
+            .surname {
 
-        .mb0 {
-            margin-bottom: 0; }
+                font-weight: bold;
 
-        .preheader {
-            color: transparent;
-            display: none;
-            height: 0;
-            max-height: 0;
-            max-width: 0;
-            opacity: 0;
-            overflow: hidden;
-            mso-hide: all;
-            visibility: hidden;
-            width: 0; }
+            }
 
-        .powered-by a {
-            text-decoration: none; }
+            body {
 
-        hr {
-            border: 0;
-            border-bottom: 1px solid #f6f6f6;
-            Margin: 20px 0; }
+                background-image: url(logo-bg.jpg);
 
-        /* -------------------------------------
-            RESPONSIVE AND MOBILE FRIENDLY STYLES
-        ------------------------------------- */
-        @media only screen and (max-width: 620px) {
-            table[class=body] h1 {
-                font-size: 28px !important;
-                margin-bottom: 10px !important; }
-            table[class=body] p,
-            table[class=body] ul,
-            table[class=body] ol,
-            table[class=body] td,
-            table[class=body] span,
-            table[class=body] a {
-                font-size: 16px !important; }
-            table[class=body] .wrapper,
-            table[class=body] .article {
-                padding: 10px !important; }
-            table[class=body] .content {
-                padding: 0 !important; }
-            table[class=body] .container {
-                padding: 0 !important;
-                width: 100% !important; }
-            table[class=body] .main {
-                border-left-width: 0 !important;
-                border-radius: 0 !important;
-                border-right-width: 0 !important; }
-            table[class=body] .btn table {
-                width: 100% !important; }
-            table[class=body] .btn a {
-                width: 100% !important; }
-            table[class=body] .img-responsive {
-                height: auto !important;
-                max-width: 100% !important;
-                width: auto !important; }}
+                background-repeat: no-repeat;
 
-        /* -------------------------------------
-            PRESERVE THESE STYLES IN THE HEAD
-        ------------------------------------- */
-        @media all {
-            .ExternalClass {
-                width: 100%; }
-            .ExternalClass,
-            .ExternalClass p,
-            .ExternalClass span,
-            .ExternalClass font,
-            .ExternalClass td,
-            .ExternalClass div {
-                line-height: 100%; }
-            .apple-link a {
-                color: inherit !important;
-                font-family: inherit !important;
-                font-size: inherit !important;
-                font-weight: inherit !important;
-                line-height: inherit !important;
-                text-decoration: none !important; }
-            .btn-primary table td:hover {
-                background-color: #34495e !important; }
-            .btn-primary a:hover {
-                background-color: #34495e !important;
-                border-color: #34495e !important; } }
+                margin-left: 5px;
 
-    </style>
-</head>
-<body class="">
-<table border="0" cellpadding="0" cellspacing="50" class="body">
-    <tr>
-        <td>&nbsp;</td>
-        <td class="container">
-            <div class="content">
+            }
 
-                <!-- START CENTERED WHITE CONTAINER -->
-                <span class="preheader">Thank you for registering on our website.</span>
-                <table class="main">
+        </style>
 
-                    <!-- START MAIN CONTENT AREA -->
-                    <tr>
-                        <td class="wrapper">
-                            <table border="0" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td align="center">
-                                        <a href="http://run.edu.ng"><img src="http://run.edu.ng/site/img/logo.png" alt="" title="" /></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-						<p>Hello  ***name ,</p>
-						<p>You've been assigned the case with Refernce No. ***reference. Please click the button below to read more and accept the case.</p>
-						<table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" align="center"> 
-					
-                    	<tbody>
-						<tr>
-							<td align="center">
-								<table border="0" cellpadding="0" cellspacing="0">
-									<tbody>
-									<tr align="center">
-										<td align="center"> <a href="***" target="_blank">Read More</a> </td>
-									</tr>
-									</tbody>
-								</table>
-							</td>
-						</tr>
-						</tbody>
-					</table>
+    </head>
 
-				</td>
-			</tr>
-		</table>
-	</td>
-                    </tr>
 
-                    <!-- END MAIN CONTENT AREA -->
-                </table>
 
-                <!-- START FOOTER -->
-                <div class="footer">
-                    <table border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td class="content-block">
-                                <span class="apple-link">No. 817B (Twin House) Behind GT Bank, Off Ebitu Ukiwe Street, Jabi, Abuja FCT</span>
-                                <br> You are getting this because you registered as  on our Website
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="content-block powered-by">
-                                Powered by <a href="https://probono.ng">Probono.ng</a>.
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <!-- END FOOTER -->
+    <body>
 
-                <!-- END CENTERED WHITE CONTAINER -->
-            </div>
-        </td>
-        <td>&nbsp;</td>
-    </tr>
-</table>
-</body>
+
+
+        <table width="800" border="0" align="center" cellpadding="5" cellspacing="5">
+
+            <tr>
+
+                <td height="100" colspan="2" align="right" valign="top">
+                <h2 align="right">
+                    <strong><img src="logo.jpg" width="172" height="141" align="left" />REDEEMER&rsquo;S UNIVERSITY </strong>
+                    </h2>
+
+                    <p align="right"><font color="#990099"><i>P.M.B. 230,Ede,<br />
+
+                            </i></font><font color="#990099"> <i>        
+
+                                Osun State Nigeria,</i></font><br />
+
+                        <font color="#990099"><i> Tel: +234 (0)700-700-8000 ; +234 (0)807-300-4715<br />
+
+                                Website:  <u>www.run.edu.ng</u>	E-mail:  <u>registrar@run.edu.ng</u></i>
+
+                        </font> </p><hr /></td>
+
+            </tr>
+
+            <tr>
+
+                <td width="36%">RUN/REG/ADM/<?php echo trim($s_program_code); ?>/<?php echo substr($s_session_admitted,2,2) ; ?>-<?php echo substr($s_session_admitted,7,2) ; ?>/<?php echo $sRefNo ?></td>
+
+                <td width="37%"><div align="right"><?php echo $s_date_admitted; ?></div></td>
+
+            </tr>
+
+            <tr>
+
+                <td colspan="2"><p><span class="surname"><?php echo $s_surname; ?></span>, <?php echo $s_firstname; ?><br />
+
+<?php echo $s_adddress_resident; ?><br />
+
+<?php echo $s_city_resident; ?>,<br />
+
+<?php echo $s_state_resident; ?> State</p></td>
+
+            </tr>
+
+            <tr>
+
+                <td colspan="2">Dear <?php echo $s_title_given_gender; ?> <?php echo $s_surname; ?>, </td>
+
+            </tr>
+
+            <tr>
+
+                <td colspan="2"><strong><u>OFFER OF PROVISIONAL ADMISSION: DEGREE PROGRAMME</u></strong></td>
+
+            </tr>
+
+            <tr>
+
+                <td colspan="2" valign="top"><p>With reference to your application for  admission to a degree programme in this University and further to the screening  exercise, I have the pleasure to inform you that you have been offered  provisional admission to study for a degree course leading to the award of  <?php echo $s_Degree; ?>  Degree  in <strong> <?php echo $s_program_name; ?> </strong>of the 
+
+                        <strong> <?php echo $Department; ?>  of  <?php echo $s_department_name; ?>.</strong></p>
+
+                    <p>The duration of the programme is <?php echo $duration; ?> years.</p>
+
+                    <p>Please note that this offer is provisional  and can be revoked if you fail to produce the documents listed in the 
+                        <strong><u><a href="#">
+
+                                    Notice to Candidates offered Provisional  Admission.</a></u></strong></p>
+
+                    <p>If you accept the offer, please complete the  <strong><u><a href="acceptanceform.php?app_id=<?php echo $_REQUEST['app_id']; ?>">Acceptance Form</a></u></strong> and  return with an evidence  of payment of the Acceptance/Processing Fee (non-refundable deposit) of <strong><u><?php echo $s_non_refundable_deposit ; ?></u> only, not later than <?php $s_date_admitted = date('Y-m-d', strtotime($s_date_admitted. ' + 14 days')) ; echo date_format(date_create($s_date_admitted), ' l\, jS F\, Y'); ?>.</strong></p>
+                    <p>Please note also that  the offer may be withdrawn if, within the stipulated time, you have not  completed and returned the Acceptance Form.</p>
+                    <p>The University has since resumed for the <?php echo $s_session_admitted ;?> academic session on <strong><?php echo $s_resumption_date  ; ?></strong>. Please come along with the completed acceptance form to the registration venue.  <!-- Registration closes on <strong><?php echo $s_registration_closes  ; ?>.</strong></p> --></td>
+
+            </tr>
+
+            <tr>
+
+                <td colspan="2"><p>Accept my congratulations.</p>
+
+                    <img  src="Registrar_Signature_Mofoluso.jpg" /><br />       <span id="yui_3_7_2_1_1358250129829_2527" lang="EN-GB" xml:lang="EN-GB"><strong>Olukayode E. Akindele,</strong></span><br />
+                    REGISTRAR</td>
+
+            </tr>
+
+            <tr>
+
+                <td colspan="2"><p><strong><em>Please  download the underlisted documents from the University Website</em></strong><br />
+                        (i)         Admission Acceptance Form<br />
+                        (ii)        Notice to Candidates offered Provisional  Admission<br />
+                        (iii)       Schedule of Fees</p>
+                    <p>&nbsp;</p></td>
+
+            </tr>
+
+            <tr>
+
+                <td height="40" colspan="2">&nbsp;</td>
+
+            </tr>
+
+        </table>
+
+    </body>
+
 </html>
+

@@ -7,13 +7,27 @@ use App\Models\Admission\application_assessment;
 use App\Models\Admission\application_credentials;
 use App\Models\Applicant;
 use App\Models\Application;
+use App\Models\ApplicantProfile;
+use App\Models\Setting;
 use App\Models\Programme;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
+
 class AdmissionOfficer extends Controller
 {
+
+
+    static function settings($request){
+        if ($request->has('session') && $request->has('semester')){
+            $settings = Setting::where('semester_name', $request->semester)->where('session_name',$request->session)->first();
+            return $settings;
+        }
+        $settings = Setting::where('status', 'active')->first();
+        return $settings; 
+    }
+
     public function getApplicants(Request $request)
     {
         try {
@@ -85,8 +99,9 @@ class AdmissionOfficer extends Controller
 
     public function admissionApproved(Request $request)
     {
-        // return response($request);
-        //Check for role and permission
+        // return $this->settings($request);
+        //  return  date("F d, Y")  ;
+        
         $validator = Validator::make($request->all(), [
             'applicant' => 'required',
             'applicationId' => 'required',
@@ -100,6 +115,7 @@ class AdmissionOfficer extends Controller
         try {
             $getProgramme = Programme::find($request->programmeId);
             $applicant = Applicant::find($request->applicant);
+            $profile = ApplicantProfile::where('applicant_id',$request->applicant)->first();
             if (isset($getProgramme) && $applicant) {
                 if ($request->admsStatus == 'approved') {
                     $update = DB::table('application_assessment')->where('application_id', $request->applicationId)->update([
@@ -108,7 +124,10 @@ class AdmissionOfficer extends Controller
                     $application = Application::find($request->applicationId);
                     $application->status = 'approved';
                     $application->save();
-                    //send admission success email to student here
+                    $emailParams = ['address'=>[$profile->contact_address],
+                     'title'=>$profile->title, 'name'=>$applicant->surname];
+                    return $emailParams;
+
                     return response()->json(['info' => "Application Appproved", 'value' => "Application Appproved", 'msg' => "success"]);
                 } else {
                     //send admission decline email to student here

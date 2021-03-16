@@ -24,6 +24,7 @@ class CreateStudentsTable extends Migration
             $table->string('password');
             $table->string('token')->nullable();
             $table->string('type')->default('student');
+            $table->foreignId('application_id')->nullable();
             $table->foreignId('applicant_id')
             ->nullable()
             ->constrained('applicants')

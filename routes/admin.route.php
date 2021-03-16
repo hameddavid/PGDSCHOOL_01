@@ -8,12 +8,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::any("paymentTypes",[PaymentHelper::class , 'paymentTypes']);
-
 Route::any('/upload/fee/categories', [BursaryController::class , 'uploadFeeCategories']);
+
+Route::any('/settings', [AdmissionOfficer::class , 'settings']);
+
 
 Route::any('/getApplicants', [AdmissionOfficer::class , 'getApplicants']);
 Route::any('/getApplications', [AdmissionOfficer::class , 'getApplications']);
 Route::any('/getForms', [AdmissionOfficer::class , 'getForms']);
+
 Route::any('/downloadFile', [AuthController::class , 'downloadFile']);
 Route::any('/importProgrammes', [AdminController::class , 'importProgrammes']);
 Route::any('/getProgrammeForApprove', [AdmissionOfficer::class , 'getProgrammeForApprove']);

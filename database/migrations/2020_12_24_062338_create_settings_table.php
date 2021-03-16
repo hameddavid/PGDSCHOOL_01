@@ -17,6 +17,9 @@ class CreateSettingsTable extends Migration
             $table->id();
             $table->integer('semester_id')->nullable();
             $table->integer('session_id')->nullable();
+            $table->string('semester_name')->unique();
+            $table->string('session_name')->unique();
+            $table->string('status')->default('None');
             $table->timestamps();
         });
     }
