@@ -98,4 +98,11 @@ class PaymentHelper extends Controller
         $types = Payment::where('programme_type', $request->programme_type)->get('type');
         return response()->json(['types'=>$types , 'msg'=>'success']);
     }
+
+    public function getFeeType(Request $request)
+    {
+        //get transactions to check if paid for completely
+        $payment = Payment::where('status','student')->where('optional',$request->optional)->get();
+        return response()->json(['msg'=>'success', 'payment'=>$payment]);
+    }
 }
