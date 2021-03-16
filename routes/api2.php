@@ -33,6 +33,9 @@ Route::post('test', function(Request $request){
     return rand(000001,999999);
 });
 
+
+Route::any('billing/per/prog', [PaymentHelper::class , 'billing_per_prog']);
+
 //remita
 Route::post('updateTransaction', [RemitaController::class , 'updateTransaction'])->middleware('auth:sanctum');
 

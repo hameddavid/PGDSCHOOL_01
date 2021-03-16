@@ -5,12 +5,25 @@ namespace App\Http\Controllers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\Payment;
+use App\Models\Billing;
 use App\Models\Transaction;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class PaymentHelper extends Controller
 {
+
+    static function settings($request){
+        if ($request->has('session') && $request->has('semester')){
+            $settings = Setting::where('semester_name', $request->semester)->where('session_name',$request->session)->first();
+            return $settings;
+        }
+        $settings = Setting::where('status', 'active')->first();
+        return $settings; 
+    }
     public function checkAcceptance(Request $request)
     {
         $application = Application::find($request->applicationId);
@@ -104,5 +117,48 @@ class PaymentHelper extends Controller
         //get transactions to check if paid for completely
         $payment = Payment::where('status','student')->where('optional',$request->optional)->get();
         return response()->json(['msg'=>'success', 'payment'=>$payment]);
+    }
+
+    public function billing_per_prog(Request $request){
+
+       
+        $validator = Validator::make($request->all(), [
+            'progType' => 'required',
+            'progId' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'all fields are required!'], 401);
+        }
+
+        try {
+            // $currentBill = DB::table('billings')->select('amount AS Bill')->where('session', $this->settings($request)->session_name)
+            // ->where('prog_type', $request->progType)->where('id',$request->progId)->get()->toArray();
+            $currentBill = Billing::where('programme_id',$request->progId)->where('session',$this->settings($request)->session_name)->first();
+             $x =  explode(',', $currentBill->payment_percentage);
+             $percentage = ['first-payment'=>$x[0], 'final-payment'=>$x[1]];
+    
+            $compulsaryPayment = DB::table('payments')
+            ->select('payments.amount','payments.type','payments.installment')
+            ->where('programme_id', $request->progId)
+            ->where('programme_type', $request->progType)
+            ->where('optional',0)
+            ->where('status', 'STUDENT')->where('payments.session', $this->settings($request)->session_name)
+            ->get()->toArray();
+            $optionalPayment = DB::table('payments')
+            ->select('payments.amount','payments.type')
+            ->where('programme_id', $request->progId)
+            ->where('programme_type', $request->progType)
+            ->where('optional',1)
+            ->where('status', 'STUDENT')->where('payments.session', $this->settings($request)->session_name)
+            ->get()->toArray();
+            $result = ['compulsary'=> array_merge($compulsaryPayment, $percentage), 'optional'=>$optionalPayment];
+            return $result;
+
+        } catch (\Throwable $th) {
+           
+            return response()->json(['error' => 'Error fetching Fee', 'th' => $th], 401);
+
+        }
+
     }
 }

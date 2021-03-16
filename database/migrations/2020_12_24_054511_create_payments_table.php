@@ -27,7 +27,8 @@ class CreatePaymentsTable extends Migration
             $table->string('programme_type')->nullable();
             $table->string('insatllment')->nullable();
             $table->string('session')->nullable();
-            // $table->string('type')
+            $table->string('status')->default('student');
+            $table->boolean('optional')->default('0');
             $table->timestamps();
         });
     }
