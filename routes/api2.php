@@ -68,3 +68,5 @@ Route::any('/t', function(){
     $f = application_assessment::where('id', 2)->first();
     return $f->essay['name'];
 });
+
+Route::post('getFeeType', [PaymentHelper::class, 'getFeeType'])->middleware('auth:sanctum');
