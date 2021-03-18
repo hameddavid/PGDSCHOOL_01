@@ -11,24 +11,21 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AdmissionStatusMail;
 
+
 class AdmissionStatusMailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
-    protected $applicants;
-    protected $prog;
-    protected $application;
+    protected $emailParams;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($applicants, $prog, $application)
+    public function __construct($emailParams)
     {
-        $this->applicants = $applicants;
-        $this->prog = $prog;
-        $this->application = $application;
+        $this->emailParams = $emailParams;
     }
 
     /**
@@ -38,6 +35,6 @@ class AdmissionStatusMailJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->applicants->email)->send(new AdmissionStatusMail());
+        Mail::to($this->emailParams['email'])->send(new AdmissionStatusMail($this->emailParams));
     }
 }

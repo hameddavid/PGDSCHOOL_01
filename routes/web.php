@@ -3,6 +3,8 @@
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Users\AdmissionOfficer;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +31,7 @@ Route::get('g', function(){
 Route::get("adminTest", function(){
     return view('Tests.admin');
 });
+
+Route::get("email", [AdmissionOfficer::class, 'admissionApproved']);
+
+

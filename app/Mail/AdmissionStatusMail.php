@@ -9,22 +9,19 @@ use Illuminate\Queue\SerializesModels;
 
 class AdmissionStatusMail extends Mailable
 {
+
     use Queueable, SerializesModels;
 
-    public $applicants;
-    public $prog;
-    public $application;
+    public $emailParams;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($applicants, $prog, $application)
+    public function __construct($emailParams)
     {
-        $this->applicants = $applicants;
-        $this->prog = $prog;
-        $this->application = $application;
+        $this->emailParams = $emailParams;
     }
 
     /**
@@ -34,7 +31,7 @@ class AdmissionStatusMail extends Mailable
      */
     public function build()
     {
-        if($this->application->status == 'approved')
+        if($this->emailParams['status'] == 'approved')
            {return $this->view('email.admissionApproved');} 
         else{
             return $this->view('email.admissionDeclined');  

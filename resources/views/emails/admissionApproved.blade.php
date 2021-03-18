@@ -80,7 +80,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
                 <td height="100" colspan="2" align="right" valign="top">
                 <h2 align="right">
-                    <strong><img src="logo.jpg" width="172" height="141" align="left" />REDEEMER&rsquo;S UNIVERSITY </strong>
+                    <strong><img src="{{URL::asset('/logo/logo.jpg')}}" width="172" height="141" align="left" />REDEEMER&rsquo;S UNIVERSITY </strong>
                     </h2>
 
                     <p align="right"><font color="#990099"><i>P.M.B. 230,Ede,<br />
@@ -99,73 +99,73 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
             <tr>
 
-                <td width="36%">RUN/REG/ADM/<?php echo trim($s_program_code); ?>/<?php echo substr($s_session_admitted,2,2) ; ?>-<?php echo substr($s_session_admitted,7,2) ; ?>/<?php echo $sRefNo ?></td>
+            <td width="36%">RUN/REG/PG/ADM/{{$emailParams['progCode']}}/{{substr($emailParams['session'],2,2)}}-{{substr($emailParams['session'],7,2)}}/{{$emailParams['applicant_id']}}</td>
 
-                <td width="37%"><div align="right"><?php echo $s_date_admitted; ?></div></td>
-
-            </tr>
-
-            <tr>
-
-                <td colspan="2"><p><span class="surname"><?php echo $s_surname; ?></span>, <?php echo $s_firstname; ?><br />
-
-<?php echo $s_adddress_resident; ?><br />
-
-<?php echo $s_city_resident; ?>,<br />
-
-<?php echo $s_state_resident; ?> State</p></td>
+                <td width="37%"><div align="right">{{$emailParams['date_admitted']}}</div></td>
 
             </tr>
 
             <tr>
 
-                <td colspan="2">Dear <?php echo $s_title_given_gender; ?> <?php echo $s_surname; ?>, </td>
+                <td colspan="2"><p><span class="surname">{{$emailParams['surname']}}</span>, {{$emailParams['firstname']}}<br />
+
+                {{$emailParams['address']}}<br />
+
 
             </tr>
 
             <tr>
 
-                <td colspan="2"><strong><u>OFFER OF PROVISIONAL ADMISSION: DEGREE PROGRAMME</u></strong></td>
+                <td colspan="2">Dear {{$emailParams['title']}}. {{$emailParams['surname']}}, </td>
 
             </tr>
 
             <tr>
 
-                <td colspan="2" valign="top"><p>With reference to your application for  admission to a degree programme in this University and further to the screening  exercise, I have the pleasure to inform you that you have been offered  provisional admission to study for a degree course leading to the award of  <?php echo $s_Degree; ?>  Degree  in <strong> <?php echo $s_program_name; ?> </strong>of the 
-
-                        <strong> <?php echo $Department; ?>  of  <?php echo $s_department_name; ?>.</strong></p>
-
-                    <p>The duration of the programme is <?php echo $duration; ?> years.</p>
-
-                    <p>Please note that this offer is provisional  and can be revoked if you fail to produce the documents listed in the 
-                        <strong><u><a href="#">
-
-                                    Notice to Candidates offered Provisional  Admission.</a></u></strong></p>
-
-                    <p>If you accept the offer, please complete the  <strong><u><a href="acceptanceform.php?app_id=<?php echo $_REQUEST['app_id']; ?>">Acceptance Form</a></u></strong> and  return with an evidence  of payment of the Acceptance/Processing Fee (non-refundable deposit) of <strong><u><?php echo $s_non_refundable_deposit ; ?></u> only, not later than <?php $s_date_admitted = date('Y-m-d', strtotime($s_date_admitted. ' + 14 days')) ; echo date_format(date_create($s_date_admitted), ' l\, jS F\, Y'); ?>.</strong></p>
-                    <p>Please note also that  the offer may be withdrawn if, within the stipulated time, you have not  completed and returned the Acceptance Form.</p>
-                    <p>The University has since resumed for the <?php echo $s_session_admitted ;?> academic session on <strong><?php echo $s_resumption_date  ; ?></strong>. Please come along with the completed acceptance form to the registration venue.  <!-- Registration closes on <strong><?php echo $s_registration_closes  ; ?>.</strong></p> --></td>
+                <td colspan="2"><strong><u>OFFER OF PROVISIONAL ADMISSION FOR POSTGRADUATE STUDIES:
+                 {{$emailParams['session']}} ACADEMIC SESSION</u></strong></td>
 
             </tr>
 
             <tr>
 
-                <td colspan="2"><p>Accept my congratulations.</p>
+                <td colspan="2" valign="top"><p>I am pleased to inform you that following
+                 your application for postgraduate programme 
+                in Redeemer’s University, you have been offered admission into
+                <strong> {{$emailParams['apply_for']}}</strong> 
+                Degree in <strong>{{$emailParams['programme']}}</strong> 
+                in the Department of <strong>{{$emailParams['dept']}}</strong>,
+                 Faculty of <strong>{{$emailParams['college']}}</strong>. 
+                  <em>Your admission is for the {{$emailParams['semester']}} 
+                of {{$emailParams['session']}} academic session </em>. </p>
 
-                    <img  src="Registrar_Signature_Mofoluso.jpg" /><br />       <span id="yui_3_7_2_1_1358250129829_2527" lang="EN-GB" xml:lang="EN-GB"><strong>Olukayode E. Akindele,</strong></span><br />
-                    REGISTRAR</td>
+                <p>The graduate programmes at Redeemer’s University are among the
+                 very best in Nigeria. We have outstanding academic staff, 
+                 and a stimulating intellectual atmosphere that enhances thorough research.</p>
 
+                    <p>Your mode of study is full-time, and the minimum duration of your
+                     programme is three (3) semesters, at the University permanent Campus, Ede, Osun State.</p>
+
+
+                    <p>Please, contact the College of Postgraduate Studies as soon as possible for further information on registration. Late registration will attract a penalty of Ten Thousand Naira (N10, 000.00). At the point of registration, you will be required to present original copies of your credentials for sighting along with three (3) sets of photocopies and four (5) passport photographs. </p>
+
+                   <p>The schedule of payment of school fees, including accommodation fee is available on the University Website (www.run.edu.ng/cpgs). The College may allow for payment in two (2) installments of 60% and 40% for First and Second Semesters respectively.</p>
+            
+                <p> Please note that the Redeemer’s University is a Faith-based Institution where moral values and Christian norms are entrenched.</p>
             </tr>
 
             <tr>
 
-                <td colspan="2"><p><strong><em>Please  download the underlisted documents from the University Website</em></strong><br />
-                        (i)         Admission Acceptance Form<br />
-                        (ii)        Notice to Candidates offered Provisional  Admission<br />
-                        (iii)       Schedule of Fees</p>
-                    <p>&nbsp;</p></td>
+                <td colspan="2"><p>We look forward to meeting you early.</p>
+                    <p>Yours truly,</p>
+                    <img  src="{{URL::asset('/admin/adms.jpg')}}" /><br />      
+                     <span id="yui_3_7_2_1_1358250129829_2527" lang="EN-GB"
+                      xml:lang="EN-GB"><strong>Mr. E. K. Adeyanju,</strong>
+                      </span><br />
+                      Secretary, CPGS</td>
 
             </tr>
+
 
             <tr>
 

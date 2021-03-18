@@ -8,11 +8,17 @@ use App\Models\Admission\application_credentials;
 use App\Models\Applicant;
 use App\Models\Application;
 use App\Models\ApplicantProfile;
+use App\Models\ApplicationAssessment;
 use App\Models\Setting;
 use App\Models\Programme;
+use App\Models\Department;
+use App\Models\College;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use App\Jobs\AdmissionStatusMailJob;
+
 
 
 class AdmissionOfficer extends Controller
@@ -99,6 +105,7 @@ class AdmissionOfficer extends Controller
 
     public function admissionApproved(Request $request)
     {
+        
         // return $this->settings($request);
         //  return  date("F d, Y")  ;
         
@@ -114,20 +121,29 @@ class AdmissionOfficer extends Controller
         //Use try/catch for application_assessment
         try {
             $getProgramme = Programme::find($request->programmeId);
+            $dept = $this->get_dept_given_prog($getProgramme->department_id);
+            $college = $this->get_faculty_given_dept($dept->college_id);
             $applicant = Applicant::find($request->applicant);
             $profile = ApplicantProfile::where('applicant_id',$request->applicant)->first();
             if (isset($getProgramme) && $applicant) {
                 if ($request->admsStatus == 'approved') {
-                    $update = DB::table('application_assessment')->where('application_id', $request->applicationId)->update([
-                        'approved_programme_id' => $request->programmeId,
-                    ]);
+                    $update = ApplicationAssessment::where('application_id', $request->applicationId)->first();
+                    $update->approved_programme_id = $request->programmeId;
+                    $update->save();
                     $application = Application::find($request->applicationId);
                     $application->status = 'approved';
                     $application->save();
-                    $emailParams = ['address'=>[$profile->contact_address],
-                     'title'=>$profile->title, 'name'=>$applicant->surname];
-                    return $emailParams;
-
+                    $emailParams = ['address'=>$profile->contact_address,
+                    'email'=>$applicant->email, 'status'=>$application->status,
+                     'title'=>$profile->title, 'surname'=>$applicant->surname,'firstname'=>$applicant->firstname,
+                    'session'=>$this->settings($request)->session_name,
+                    'semester'=>$this->settings($request)->semester_name,
+                    'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
+                    'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
+                    'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college ];
+                    //return view('emails.admissionApproved', ['emailParams'=>$emailParams]);
+                     $adms_job = (new AdmissionStatusMailJob($emailParams))->delay(Carbon::now()->addSeconds(2));
+                     dispatch($adms_job);
                     return response()->json(['info' => "Application Appproved", 'value' => "Application Appproved", 'msg' => "success"]);
                 } else {
                     //send admission decline email to student here
@@ -139,6 +155,27 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Error updating programme', 'th' => $th], 401);
         }
     }
+
+
+    static function get_dept_given_prog($prog_id){
+        try {
+            $dept = Department::find($prog_id);
+            return $dept;
+        } catch (\Throwable $th) {
+            
+            return response()->json(['error' => 'Error getting department given programme ID', 'th' => $th], 401);
+        }
+    }
+    static function get_faculty_given_dept($faculty_id){
+        try {
+            $faculty = College::find($faculty_id);
+            return $faculty;
+        } catch (\Throwable $th) {
+            
+            return response()->json(['error' => 'Error getting faculty given department ID', 'th' => $th], 401);
+        }
+    }
+
 
     public function admissionDenied(Request $request)
     {
