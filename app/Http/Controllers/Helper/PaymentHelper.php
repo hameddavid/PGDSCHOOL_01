@@ -138,14 +138,14 @@ class PaymentHelper extends Controller
              $percentage = ['first_payment'=>$x[0], 'final_payment'=>$x[1]];
 
             $compulsaryPayment = DB::table('payments')
-            ->select('payments.amount','payments.type','payments.installment')
+            ->select('payments.amount','payments.type','payments.installment','payments.id')
             ->where('programme_id', $request->progId)
             ->where('programme_type', $request->progType)
             ->where('optional',0)
             ->where('status', 'student')->where('payments.session', $this->settings($request)->session_name)
             ->get()->toArray();
             $optionalPayment = DB::table('payments')
-            ->select('payments.amount','payments.type')
+            ->select('payments.amount','payments.type','payments.id')
             ->where('programme_id', $request->progId)
             ->where('programme_type', $request->progType)
             ->where('optional',1)
