@@ -3,13 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Applicant;
+use App\Models\Application;
+use App\Models\Programme;
+use App\Models\Setting;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
+
+    static function settings($request){
+        if ($request->has('session') && $request->has('semester')){
+            $settings = Setting::where('semester_name', $request->semester)->where('session_name',$request->session)->first();
+            return $settings;
+        }
+        $settings = Setting::where('status', 'active')->first();
+        return $settings;
+    }
+
     public function pgStudentLogin(Request $request)
     {
         //email is matric number
@@ -18,6 +32,7 @@ class StudentController extends Controller
             'password' => 'required'
         ]);
         $student  = Student::where('email',$request->email)->first();
+        $personalData = DB::table('application_personaldata')->where('applicant_id',$student->applicant_id)->first();
 
         if (!$student || !Hash::check($request->password, $student->password)) {
 
@@ -25,14 +40,19 @@ class StudentController extends Controller
         }
 
         $token = $student->createToken('mobile')->plainTextToken;
-        return response()->json(['token' => $token, 'user' => $student, 'msg' => 'success', 'info' => 'Login Successful']);
+        return response()->json(['token' => $token, 'user' => $student, 'personalData'=>$personalData,  'msg' => 'success', 'info' => 'Login Successful']);
     }
     public function makeApplicantStudent(Request $request)
     {
         Log::info($request);
+        $application = Application::where('applicant_id',$request['applicant'])->latest('updated_at')->first();
         // data used
         $applicant = Applicant::find($request['applicant']);
         $check = Student::where('applicant_id', $applicant->id)->first();
+        $application_assessment = DB::table('application_assessment')->where('application_id',$application->id)->first();
+        $session_name = $this->settings($request)->session_name;
+        $progCode = Programme::find($application_assessment->approved_programme_id);
+        $matric_no = "RUN/REG/PG/ADM/".$progCode->code.'/'.$session_name.'/'.$applicant->id;
         if ($check) {
             return response()->json(['msg'=>'success', 'info'=>'Login as a student']);
         }else{
@@ -40,10 +60,16 @@ class StudentController extends Controller
             $student->email = $applicant->email;
             $student->password = $applicant->password;
             $student->applicant_id  = $applicant->id;
+            $student->application_id = $application->id;
+            $student->matric_no = $matric_no;
             $student->save();
             return response()->json(['msg'=>'success', 'info'=>'You can now login as a student']);
         }
         // check if already a student
         // Log::info("migrate student");
+    }
+    public function createAdmissionMatric()
+    {
+
     }
 }

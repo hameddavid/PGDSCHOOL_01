@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Helper\PaymentHelper;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Users\AdmissionOfficer;
 use App\Http\Controllers\Users\BursaryController;
 use Illuminate\Http\Request;
@@ -27,3 +28,5 @@ Route::any('/admissionDenied', [AdmissionOfficer::class, 'admissionDenied']);
 
 
 Route::any('/all/payment', [BursaryController::class, 'allPayment']);
+// Route::any('test', [StudentController::class , 'makeApplicantStudent']);
+
