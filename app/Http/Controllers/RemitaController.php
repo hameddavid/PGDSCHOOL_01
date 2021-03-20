@@ -8,6 +8,7 @@ use App\Http\Controllers\PaymentController;
 use App\Models\Transaction;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
@@ -137,10 +138,19 @@ class RemitaController extends Controller
         if (!$checkRRR) {
             return response()->json(['error' => 'RRR is not available in our transaction records'], 404);
         }
+        $transaction = Transaction::where('rrr', $request->payment['rrr'])->get();
+        if(count($transaction) > 1){
+            foreach ($transaction as $key => $value) {
+                DB::table('transactions')->where('id',$value->id)->update([
+                    'status'=>$request->status
+                ]);
+            }
+        }else{
         $transaction = Transaction::where('rrr', $request->payment['rrr'])->first();
-        $transaction->status = $request->status;
-        $transaction->amount = $amountValue;
-        $transaction->save();
+            $transaction->status = $request->status;
+            $transaction->amount = $amountValue;
+            $transaction->save();
+        }
         // $checkRRR[]
         event(new RemitaBank($transaction));
         return "OK";

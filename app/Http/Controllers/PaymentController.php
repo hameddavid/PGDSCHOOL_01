@@ -77,6 +77,51 @@ class PaymentController extends Controller
         DB::table('application_employmenthistory')->insert(['application_id' => $application->id]);
         return $application;
     }
+    public function studentInitTransactions(Request $request)
+    {
+        $orderID = time();
+        $payment = null;
+        $amount = null;
+        foreach ($request->payments as $key => $value) {
+            if($key == 0){
+                $payment = Payment::find($value['id']);
+            }
+            $Authuser = $request->user();
+            $amount  = $amount + $value['amount'] ;
+            // $payment = Payment::find($request->payment);
+            $Authuser->transactions()->attach($value['id'], [
+                'amount' => $value['amount'],
+                'status' => 'pending',
+                'details' => $value['type'],
+                'orderId'=>$orderID
+            ]);
+        };
+        $payment['orderId'] = $orderID;
+        $payment['amount']=$amount;
+        return response()->json(["value"=>$payment]);
+
+
+    }
+    public function saveStudentRRR(Request $request)
+    {
+        $transactions = DB::table('transactions')->where('orderId',$request->orderId)->get();
+        foreach ($transactions as $key => $value) {
+            // return response()->json([$value]);
+            DB::table('transactions')->where('id',$value->id)->update([
+                'RRR'=>$request->RRR
+            ]);
+        }
+        return response()->json(['info'=>'RRR saved', 'value'=>true]);
+    }
+    public function studentUpdateTransaction(Request $request)
+    {
+        $transactions = DB::table('transactions')->where('rrr',$request->rrr)->get();
+        foreach ($transactions as $key => $value) {
+            DB::table('transactions')->where('id',$value->id)->update([
+                'status'=>'SUCCESS'
+            ]);
+        }
+    }
     public function initTransaction(Request $request)
     {
         $check = $this->checkRRR($request);

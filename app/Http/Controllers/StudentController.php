@@ -32,7 +32,7 @@ class StudentController extends Controller
             'password' => 'required'
         ]);
         $student  = Student::where('email',$request->email)->first();
-        $personalData = DB::table('application_personaldata')->where('applicant_id',$student->applicant_id)->first();
+        $applicant = Applicant::find($student->applicant_id);
 
         if (!$student || !Hash::check($request->password, $student->password)) {
 
@@ -40,7 +40,11 @@ class StudentController extends Controller
         }
 
         $token = $student->createToken('mobile')->plainTextToken;
-        return response()->json(['token' => $token, 'user' => $student, 'personalData'=>$personalData,  'msg' => 'success', 'info' => 'Login Successful']);
+        $student['mobile']= $applicant->mobile;
+        $student['surname'] = $applicant->surname;
+        $student['firstname'] = $applicant->firstname;
+        $student['lastname'] = $applicant->lastname;
+        return response()->json(['token' => $token, 'user' => $student,  'msg' => 'success', 'info' => 'Login Successful']);
     }
     public function makeApplicantStudent(Request $request)
     {

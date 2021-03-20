@@ -25,8 +25,10 @@ class CreateTransactionsTable extends Migration
             $table->string('session')->nullable();
             $table->longText('transactionId',191)->unique()->nullable();
             //update
-            $table->string('rrr')->nullable()->unique();///remita
-            $table->string('orderId')->nullable()->unique();
+            //check me
+            $table->string('rrr')->nullable();///remita
+            //check me
+            $table->string('orderId')->nullable();
             $table->timestamps();
         });
     }
