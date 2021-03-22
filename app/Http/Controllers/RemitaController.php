@@ -145,6 +145,7 @@ class RemitaController extends Controller
                     'status'=>$request->status
                 ]);
             }
+            return "OK";
         }else{
         $transaction = Transaction::where('rrr', $request->payment['rrr'])->first();
             $transaction->status = $request->status;

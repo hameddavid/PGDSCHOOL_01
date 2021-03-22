@@ -37,6 +37,8 @@ Route::post('test', function(Request $request){
 
 Route::any('billing/per/prog', [PaymentHelper::class , 'billing_per_prog']);
 
+Route::any('student/billing/history', [PaymentHelper::class , 'studentPaymentHistory']);
+
 Route::any('student/initTransactions', [PaymentController::class , 'studentInitTransactions'])->middleware('auth:sanctum');
 Route::any('student/saveRRR', [PaymentController::class , 'saveStudentRRR']);
 Route::any('student/studentUpdateTransaction', [PaymentController::class , 'studentUpdateTransaction']);

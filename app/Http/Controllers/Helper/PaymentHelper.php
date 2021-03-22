@@ -161,4 +161,13 @@ class PaymentHelper extends Controller
         }
 
     }
+
+    public function studentPaymentHistory(Request $request)
+    {
+        $billing_per_prog = $this->billing_per_prog($request);
+        //get payment id
+        //get transactions based on payment and auth student
+
+    }
+
 }

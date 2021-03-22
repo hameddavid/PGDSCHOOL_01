@@ -219,7 +219,6 @@ class PaymentController extends Controller
 
     }
 
-
     public function remitaCheckRRR(Request $request)
     {
     //     $merchantId= "2547916";

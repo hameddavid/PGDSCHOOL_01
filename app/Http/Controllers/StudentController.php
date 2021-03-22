@@ -33,7 +33,7 @@ class StudentController extends Controller
         ]);
         $student  = Student::where('email',$request->email)->first();
         $applicant = Applicant::find($student->applicant_id);
-
+        $application_assessment = DB::table('application_assessment')->where('application_id',$student->application_id)->first();
         if (!$student || !Hash::check($request->password, $student->password)) {
 
             return response()->json(['error' => 'The provided credentials are incorrect'], 401);
@@ -44,7 +44,7 @@ class StudentController extends Controller
         $student['surname'] = $applicant->surname;
         $student['firstname'] = $applicant->firstname;
         $student['lastname'] = $applicant->lastname;
-        return response()->json(['token' => $token, 'user' => $student,  'msg' => 'success', 'info' => 'Login Successful']);
+        return response()->json(['token' => $token, 'user' => $student, 'student'=> $application_assessment, 'msg' => 'success', 'info' => 'Login Successful']);
     }
     public function makeApplicantStudent(Request $request)
     {
