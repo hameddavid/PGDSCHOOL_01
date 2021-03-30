@@ -31,7 +31,7 @@ class AdmissionOfficer extends Controller
             return $settings;
         }
         $settings = Setting::where('status', 'active')->first();
-        return $settings; 
+        return $settings;
     }
 
     public function getApplicants(Request $request)
@@ -105,6 +105,10 @@ class AdmissionOfficer extends Controller
 
     public function admissionApproved(Request $request)
     {
+
+        // return $this->settings($request);
+        //  return  date("F d, Y")  ;
+
         $validator = Validator::make($request->all(), [
             'applicant' => 'required',
             'applicationId' => 'required',
@@ -114,6 +118,7 @@ class AdmissionOfficer extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => 'all fields are required!'], 401);
         }
+        //Use try/catch for application_assessment
         try {
             $getProgramme = Programme::find($request->programmeId);
             $dept = $this->get_dept_given_prog($getProgramme->department_id);
@@ -128,14 +133,16 @@ class AdmissionOfficer extends Controller
                     $application = Application::find($request->applicationId);
                     $application->status = 'approved';
                     $application->save();
-                    $emailParams = ['address'=>$profile->contact_address,
+                    $emailParams = [
+                        'address'=>$profile->contact_address,
                     'email'=>$applicant->email, 'status'=>$application->status,
                      'title'=>$profile->title, 'surname'=>$applicant->surname,'firstname'=>$applicant->firstname,
                     'session'=>$this->settings($request)->session_name,
                     'semester'=>$this->settings($request)->semester_name,
                     'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
                     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
-                    'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college ];
+                    'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
+                 ];
                     //return view('emails.admissionApproved', ['emailParams'=>$emailParams]);
                      $adms_job = (new AdmissionStatusMailJob($emailParams))->delay(Carbon::now()->addSeconds(2));
                      dispatch($adms_job);
@@ -157,7 +164,7 @@ class AdmissionOfficer extends Controller
             $dept = Department::find($prog_id);
             return $dept;
         } catch (\Throwable $th) {
-            
+
             return response()->json(['error' => 'Error getting department given programme ID', 'th' => $th], 401);
         }
     }
@@ -166,7 +173,7 @@ class AdmissionOfficer extends Controller
             $faculty = College::find($faculty_id);
             return $faculty;
         } catch (\Throwable $th) {
-            
+
             return response()->json(['error' => 'Error getting faculty given department ID', 'th' => $th], 401);
         }
     }

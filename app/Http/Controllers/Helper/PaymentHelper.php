@@ -22,7 +22,7 @@ class PaymentHelper extends Controller
             return $settings;
         }
         $settings = Setting::where('status', 'active')->first();
-        return $settings; 
+        return $settings;
     }
     public function checkAcceptance(Request $request)
     {
@@ -121,7 +121,7 @@ class PaymentHelper extends Controller
 
     public function billing_per_prog(Request $request){
 
-       
+
         $validator = Validator::make($request->all(), [
             'progType' => 'required',
             'progId' => 'required',
@@ -135,30 +135,39 @@ class PaymentHelper extends Controller
             // ->where('prog_type', $request->progType)->where('id',$request->progId)->get()->toArray();
             $currentBill = Billing::where('programme_id',$request->progId)->where('session',$this->settings($request)->session_name)->first();
              $x =  explode(',', $currentBill->payment_percentage);
-             $percentage = ['first-payment'=>$x[0], 'final-payment'=>$x[1]];
-    
+             $percentage = ['first_payment'=>$x[0], 'final_payment'=>$x[1]];
+
             $compulsaryPayment = DB::table('payments')
-            ->select('payments.amount','payments.type','payments.installment')
+            ->select('payments.amount','payments.type','payments.installment','payments.id')
             ->where('programme_id', $request->progId)
             ->where('programme_type', $request->progType)
             ->where('optional',0)
-            ->where('status', 'STUDENT')->where('payments.session', $this->settings($request)->session_name)
+            ->where('status', 'student')->where('payments.session', $this->settings($request)->session_name)
             ->get()->toArray();
             $optionalPayment = DB::table('payments')
-            ->select('payments.amount','payments.type')
+            ->select('payments.amount','payments.type','payments.id')
             ->where('programme_id', $request->progId)
             ->where('programme_type', $request->progType)
             ->where('optional',1)
             ->where('status', 'STUDENT')->where('payments.session', $this->settings($request)->session_name)
             ->get()->toArray();
-            $result = ['compulsary'=> array_merge($compulsaryPayment, $percentage), 'optional'=>$optionalPayment];
+            $result = ['compulsary'=> $compulsaryPayment, 'optional'=>$optionalPayment , 'percentage'=>$percentage];
             return $result;
 
         } catch (\Throwable $th) {
-           
+
             return response()->json(['error' => 'Error fetching Fee', 'th' => $th], 401);
 
         }
 
     }
+
+    public function studentPaymentHistory(Request $request)
+    {
+        $billing_per_prog = $this->billing_per_prog($request);
+        //get payment id
+        //get transactions based on payment and auth student
+
+    }
+
 }

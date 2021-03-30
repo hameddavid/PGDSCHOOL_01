@@ -11,4 +11,9 @@ class Student extends Model
 {
     use HasFactory, Notifiable, HasApiTokens;
     protected $guarded = [];
+
+    public function transactions()
+    {
+        return $this->morphToMany(Payment::class , 'transaction')->withPivot('id','status','amount','details','reference','transactionId','rrr','orderId');
+    }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\ApplicantController;
 // use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Helper\PaymentHelper;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProgrammesController;
 use App\Http\Controllers\RemitaController;
 use App\Models\Admission\application_assessment;
@@ -35,6 +36,12 @@ Route::post('test', function(Request $request){
 
 
 Route::any('billing/per/prog', [PaymentHelper::class , 'billing_per_prog']);
+
+Route::any('student/billing/history', [PaymentHelper::class , 'studentPaymentHistory']);
+
+Route::any('student/initTransactions', [PaymentController::class , 'studentInitTransactions'])->middleware('auth:sanctum');
+Route::any('student/saveRRR', [PaymentController::class , 'saveStudentRRR']);
+Route::any('student/studentUpdateTransaction', [PaymentController::class , 'studentUpdateTransaction']);
 
 //remita
 Route::post('updateTransaction', [RemitaController::class , 'updateTransaction'])->middleware('auth:sanctum');
