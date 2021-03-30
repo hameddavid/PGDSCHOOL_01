@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Exports\PaymentExport;
 use App\Imports\PaymentImport;
+use App\Imports\ResultImport;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class BursaryController extends Controller
@@ -50,11 +52,31 @@ class BursaryController extends Controller
         }
     }
 
-    public function uploadFeeCategories()
+    public function uploadFeeCategories(Request $request)
     {
-        // return request()->file('fee');
+        $validator = Validator::make(
+            [ 'fee'      => $request->fee,
+                'extension' => strtolower($request->fee->getClientOriginalExtension())],
+            [ 'fee'          => 'required',
+                'extension'      => 'required|in:csv,xlsx,xls' ]
+        );
+        if ($validator->fails()) {
+            return response()->json(['error' => 'select proper excel file to import'], 401);
+        }
         Excel::import(new PaymentImport, request()->file('fee'));
 
+        return response()->json(['success' => 'fee uploaded successfully'], 201);
+    }
+
+
+    public function uploadResult(Request $request)
+    {
+        $validator = Validator::make($request->all(), [ 'result' => 'required']);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'select proper excel file to import'], 401);
+        }
+       $data =  Excel::toArray(new ResultImport, request()->file('result'));
+        dd($data[0]);
         return response()->json(['success' => 'fee uploaded successfully'], 201);
     }
 }

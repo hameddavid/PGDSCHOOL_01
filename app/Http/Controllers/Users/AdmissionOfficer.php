@@ -105,10 +105,6 @@ class AdmissionOfficer extends Controller
 
     public function admissionApproved(Request $request)
     {
-        
-        // return $this->settings($request);
-        //  return  date("F d, Y")  ;
-        
         $validator = Validator::make($request->all(), [
             'applicant' => 'required',
             'applicationId' => 'required',
@@ -118,7 +114,6 @@ class AdmissionOfficer extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => 'all fields are required!'], 401);
         }
-        //Use try/catch for application_assessment
         try {
             $getProgramme = Programme::find($request->programmeId);
             $dept = $this->get_dept_given_prog($getProgramme->department_id);
