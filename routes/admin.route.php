@@ -22,6 +22,7 @@ Route::any('/downloadFile', [AuthController::class , 'downloadFile']);
 Route::any('/importProgrammes', [AdminController::class , 'importProgrammes']);
 Route::any('/getProgrammeForApprove', [AdmissionOfficer::class , 'getProgrammeForApprove']);
 Route::any('adminAuth' , [AuthController::class , 'adminLogin']);
+Route::any('auto/login/staff' , [AuthController::class , 'auto_login_staff']);
 Route::any('/admissionApproved', [AdmissionOfficer::class , 'admissionApproved']);
 Route::any('/admissionDenied', [AdmissionOfficer::class, 'admissionDenied']);
 

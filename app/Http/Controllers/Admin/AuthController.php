@@ -48,6 +48,63 @@ class AuthController extends Controller
             'msg'=>'logout successfully',
         ]);
     }
+
+
+
+    public function auto_login_staff(Request $request)
+    {
+        // dd($request->all());
+        $validate = Validator::make($request->all(),[
+            'uid'=>'required',
+            'status'=>'required',
+            'sch'=>'required',
+            'deptid'=>'required',
+            'progid'=>'required',
+            'level'=>'required',
+            'title'=>'required',
+            'firstname'=>'required',
+            'lastname'=>'required',
+            'othername'=>'required',
+            'staffno'=>'required',
+            'email'=>'required',
+            'phone'=>'required',
+            'img'=>'required',
+            'sign'=>'required'
+        ]);
+
+        if($validate->fails()){
+            return response()->json(['status_code'=>400, 'msg'=>'Bad request']);
+        }
+       
+        dd($request->all());
+//         lecturer_id
+// firstname
+// surname
+// phone
+// campus_ext
+// email
+// deleted
+// login_name
+// program_id_FK
+// lecturer_category
+// picture
+// is_verified
+// signature
+// semester_last_seen
+        if(!Auth::attempt(['email'=> $request->email, 'password'=>$request->password])){
+            return response()->json([ 'error'=>'Unauthorize'],401);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $roles = [];
+        $createToken = $user->createToken('autoLoginStaff')->plainTextToken;
+        foreach($user->roles as $role){array_push($roles, $role->role);}
+        $response = ['status_code'=>200, 'msg'=>'success', 'user' => $user, 'token'=>$createToken];
+        return response()->json($response);
+    }
+
+
+
     public function downloadFile(Request $request)
     {
         $file = Storage::get($request->path);
