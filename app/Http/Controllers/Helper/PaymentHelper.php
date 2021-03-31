@@ -120,8 +120,6 @@ class PaymentHelper extends Controller
     }
 
     public function billing_per_prog(Request $request){
-
-
         $validator = Validator::make($request->all(), [
             'progType' => 'required',
             'progId' => 'required',
@@ -134,6 +132,7 @@ class PaymentHelper extends Controller
             // $currentBill = DB::table('billings')->select('amount AS Bill')->where('session', $this->settings($request)->session_name)
             // ->where('prog_type', $request->progType)->where('id',$request->progId)->get()->toArray();
             $currentBill = Billing::where('programme_id',$request->progId)->where('session',$this->settings($request)->session_name)->first();
+            // return  $this->settings($request)->session_name;
              $x =  explode(',', $currentBill->payment_percentage);
              $percentage = ['first_payment'=>$x[0], 'final_payment'=>$x[1]];
 
@@ -142,7 +141,8 @@ class PaymentHelper extends Controller
             ->where('programme_id', $request->progId)
             ->where('programme_type', $request->progType)
             ->where('optional',0)
-            ->where('status', 'student')->where('payments.session', $this->settings($request)->session_name)
+            ->where('payments.status', 'STUDENT')
+            ->where('payments.session', $this->settings($request)->session_name)
             ->get()->toArray();
             $optionalPayment = DB::table('payments')
             ->select('payments.amount','payments.type','payments.id')
@@ -165,6 +165,31 @@ class PaymentHelper extends Controller
     public function studentPaymentHistory(Request $request)
     {
         $billing_per_prog = $this->billing_per_prog($request);
+        $compulsoryPayment = $billing_per_prog['compulsary'];
+        $optionalPayment = $billing_per_prog['optional'];
+        $compulsoryPaymentIds=[];
+        $optionalPaymentIds=[];
+        foreach ($compulsoryPayment as $key => $value) {
+            array_push($compulsoryPaymentIds, $value->id);
+        }
+        foreach ($optionalPayment as $key => $value) {
+            array_push($optionalPaymentIds, $value->id);
+        }
+        // $optionalPayments = Payment::whereIn('id',$optionalPaymentIds)->get();
+        // $Compulsorypayments = Payment::whereIn('id',$compulsoryPaymentIds)->get();
+        $student = $request->user();
+        $cumpulsoryHistory = $student->transactions()->select('transactions.id AS transaction',
+        'transactions.transaction_type', 'transactions.transaction_id','transactions.payment_id AS id', 'transactions.status','transactions.amount','transactions.details',
+        'transactions.reference','transactions.transactionId','transactions.rrr','transactions.orderId')
+        ->whereNotNull('transactions.rrr')
+        ->whereIn('transactions.payment_id', $compulsoryPaymentIds)->get();
+
+        $optionalHistory = $student->transactions()->select('transactions.id AS transaction',
+        'transactions.transaction_type', 'transactions.transaction_id','transactions.payment_id AS id', 'transactions.status','transactions.amount','transactions.details',
+        'transactions.reference','transactions.transactionId','transactions.rrr','transactions.orderId')
+        ->whereNotNull('transactions.rrr')
+        ->whereIn('transactions.payment_id', $optionalPaymentIds)->get();
+        return response()->json(['cumpulsoryHistory'=>$cumpulsoryHistory, 'optionalHistory'=>$optionalHistory]);
         //get payment id
         //get transactions based on payment and auth student
 

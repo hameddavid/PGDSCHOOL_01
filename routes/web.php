@@ -18,7 +18,7 @@ use App\Http\Controllers\Users\AdmissionOfficer;
 */
 
 Route::get('/', function (Request $request) {
-
+    return "hello";
     return view('welcome');
 });
 
