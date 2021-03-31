@@ -53,14 +53,22 @@ class AuthController extends Controller
 
     public function auto_login_staff(Request $request)
     {
-        // dd($request->all());
-        $validate = Validator::make($request->all(),[
+                 
+    $params = base64_decode($request->paras);
+    $a_params = explode("&", $params);
+    $iNofOfParams = count($a_params);
+
+    if ($iNofOfParams < 5) {
+        return response()->json(['status_code'=>400, 'msg'=>'Insufficient number of parameters in request!']);
+    }
+
+        $validate = Validator::make($a_params,[
             'uid'=>'required',
             'status'=>'required',
             'sch'=>'required',
             'deptid'=>'required',
             'progid'=>'required',
-            'level'=>'required',
+            'level'=>'sometimes',
             'title'=>'required',
             'firstname'=>'required',
             'lastname'=>'required',
@@ -75,9 +83,12 @@ class AuthController extends Controller
         if($validate->fails()){
             return response()->json(['status_code'=>400, 'msg'=>'Bad request']);
         }
-       
-        dd($request->all());
-//         lecturer_id
+
+        $response = ['status_code'=>200, 'msg'=>'success', 'staff' => $a_params];
+        return response()->json($response);
+  
+
+//lecturer_id
 // firstname
 // surname
 // phone
