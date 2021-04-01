@@ -25,7 +25,7 @@ class AdmissionOfficer extends Controller
 {
 
 
-    static function settings($request){
+    public static  function settings($request){
         if ($request->has('session') && $request->has('semester')){
             $settings = Setting::where('semester_name', $request->semester)->where('session_name',$request->session)->first();
             return $settings;
@@ -54,14 +54,36 @@ class AdmissionOfficer extends Controller
     public function getApplications(Request $request)
     {
         $applications = null;
+        $dept = null;
+        $programmes = null;
+        if($request->has('deptName') && $request->filled('deptName')){
+            $dept = $this->get_dept_given_deptName($request->deptName);
+            $programmes = $this->get_progs_given_deptID($dept->id);
+        }
         if ($request->status == 'all') {
-            $applications = Application::latest()->get();
+            $applications = Application::when($programmes, function($query,$programmes){
+                return $query->whereIn('id', $programmes);
+            }, function($query){
+                return $query;
+            });
+            $applications = collect($applications->latest()->get());
+            
         } else {
-            $applications = Application::where('status', $request->status)->latest()->get();
+           // $applications = Application::where('status', $request->status)->latest()->get();
+           $status = $request->status;
+            $applications = Application::when($programmes, function($query,$programmes) use($status) {
+                return $query->where('status', $status)->whereIn('id', $programmes);
+            }, function($query) use($status){
+                return $query->where('status', $status);
+            });
+            $applications = collect($applications->latest()->get());
         }
 
         try {
+           
             foreach ($applications as $key => $value) {
+                //return $value->applicant_id;
+
                 $applicant = Applicant::find($value->applicant_id)->setHidden(['password', 'token']);
                 $applications[$key]['applicant'] = $applicant;
                 $applications[$key]['assessment'] = application_assessment::where('application_id', $value->id)->first();
@@ -71,14 +93,15 @@ class AdmissionOfficer extends Controller
             }
             return response()->json(['msg' => 'success', 'applications' => $applications]);
         } catch (\Throwable $th) {
-            //throw $th;
+            throw $th;
             return response()->json(['error' => 'Unable to fetch applications', 'th' => $th], 401);
         }
     }
     public function programmeName(Request $request, $id)
     {
-        $programme = Programme::where('id', $id)->first();
-        return $programme['programme'];
+        // $programme = Programme::where('id', $id)->first();
+        $programme = Programme::find($id);
+        return $programme ? $programme->programme : "Not Avaliable" ;
     }
     public function getForms(Request $request)
     {
@@ -105,10 +128,6 @@ class AdmissionOfficer extends Controller
 
     public function admissionApproved(Request $request)
     {
-
-        // return $this->settings($request);
-        //  return  date("F d, Y")  ;
-
         $validator = Validator::make($request->all(), [
             'applicant' => 'required',
             'applicationId' => 'required',
@@ -162,7 +181,8 @@ class AdmissionOfficer extends Controller
     static function get_dept_given_prog($prog_id){
         try {
             $dept = Department::find($prog_id);
-            return $dept;
+            if($dept){return $dept;}
+            return "Department cannot be found!";
         } catch (\Throwable $th) {
 
             return response()->json(['error' => 'Error getting department given programme ID', 'th' => $th], 401);
@@ -171,7 +191,8 @@ class AdmissionOfficer extends Controller
     static function get_faculty_given_dept($faculty_id){
         try {
             $faculty = College::find($faculty_id);
-            return $faculty;
+            if($faculty){return $faculty;}
+            return "Faculty cannot be found!";
         } catch (\Throwable $th) {
 
             return response()->json(['error' => 'Error getting faculty given department ID', 'th' => $th], 401);
@@ -200,5 +221,41 @@ class AdmissionOfficer extends Controller
         $programme = Programme::find($assessment->programme_id);
         return response()->json(['programme' => $programme]);
         // $programme =
+    }
+
+
+    public function fetch_applicants_per_dept_for_coord(Request $request)
+    {
+        // $deptName = 'COMPUTER SCIENCE';
+        $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'all fields are required!'], 401);
+        }
+       $dept = $this->get_dept_given_deptName($request->deptName);
+       $programmes = $this->get_progs_given_deptID($dept->id);
+       return $programmes;
+
+    }
+
+
+    static function get_progs_given_deptID($deptID){
+        try {
+            $programmes = Programme::where('department_id',$deptID)->pluck('id');
+            if($programmes){return $programmes;}
+            return "Department cannot be found!";
+        } catch (\Throwable $th) {
+
+            return response()->json(['error' => 'Error getting programme(s) given department ID', 'th' => $th], 401);
+        }
+    }
+    static function get_dept_given_deptName($deptName){
+        try {
+            $dept = Department::where('department',$deptName)->first();
+            if($dept){return $dept;}
+            return "Department cannot be found!";
+        } catch (\Throwable $th) {
+
+            return response()->json(['error' => 'Error getting department given department name', 'th' => $th], 401);
+        }
     }
 }

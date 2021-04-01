@@ -14,6 +14,9 @@ Route::any('/upload/fee/categories', [BursaryController::class , 'uploadFeeCateg
 Route::any('/settings', [AdmissionOfficer::class , 'settings']);
 
 
+Route::any('/fetch/applicants/per/dept/coord', [AdmissionOfficer::class , 'fetch_applicants_per_dept_for_coord']);
+
+
 Route::any('/getApplicants', [AdmissionOfficer::class , 'getApplicants']);
 Route::any('/getApplications', [AdmissionOfficer::class , 'getApplications']);
 Route::any('/getForms', [AdmissionOfficer::class , 'getForms']);
