@@ -31,7 +31,7 @@ class CreateApplicationPersonaldataTable extends Migration
             $table->string('next_of_kin_relationship', 60)->nullable();
             $table->string('next_of_kin_email', 60)->nullable();
             $table->string('next_of_kin_phone', 60)->nullable();
-            $table->string('next_of_kin_address', 60)->nullable();
+            $table->longText('next_of_kin_address')->nullable();
             // $table->string('picture')->nullable();
             $table->boolean('is_form_completed')->default(false);
             $table->foreignId('applicant_id')->unique()->constrained('applicants')

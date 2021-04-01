@@ -17,11 +17,11 @@ class CreateApplicationRefreeTable extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->string('fullname')->nullable();
-            $table->string('position')->nullable();
-            $table->string('organisation')->nullable();
+            $table->longText('position')->nullable();
+            $table->longText('organisation')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('address')->nullable();
+            $table->longText('address')->nullable();
             $table->boolean('is_form_completed')->default(false);
             $table->foreignId('application_id')
             ->nullable()
