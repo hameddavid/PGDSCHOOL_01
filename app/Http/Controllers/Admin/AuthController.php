@@ -105,7 +105,7 @@ class AuthController extends Controller
         $staff->login_name = $name;
         $staff->deptid = $final['deptid'];
         $staff->deptname =$final['deptname'];
-        $staff->program_id_FK = $final['progid']? $final['progid']:0;
+        //$staff->program_id_FK = $final['progid']? $final['progid']:0;
         $staff->lecturer_category = $final['status'];
         $staff->picture = $final['img'];
         $staff->signature = $final['sign'];
