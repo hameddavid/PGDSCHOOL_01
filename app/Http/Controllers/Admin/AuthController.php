@@ -122,34 +122,7 @@ class AuthController extends Controller
         else{
             return response()->json(['status'=>'success', 'msg'=>'Account Created,Contact Admin']);
 
-        }
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        if(!Auth::attempt(['email'=> $request->email, 'password'=>$request->password])){
-            return response()->json([ 'error'=>'Unauthorize'],401);
-        }
-
-        $user = User::where('email', $request->email)->first();
-        $roles = [];
-        $createToken = $user->createToken('autoLoginStaff')->plainTextToken;
-        foreach($user->roles as $role){array_push($roles, $role->role);}
-        $response = ['status_code'=>200, 'msg'=>'success', 'user' => $user, 'token'=>$createToken];
-        return response()->json($response);
+        } 
     }
 
 
