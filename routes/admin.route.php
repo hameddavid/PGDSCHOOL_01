@@ -30,6 +30,8 @@ Route::any('/admissionApproved', [AdmissionOfficer::class , 'admissionApproved']
 Route::any('/admissionDenied', [AdmissionOfficer::class, 'admissionDenied']);
 
 
+Route::any('admin/logout' , [AuthController::class , 'admin_logout']);
+
 
 Route::any('/all/payment', [BursaryController::class, 'allPayment']);
 // Route::any('test', [StudentController::class , 'makeApplicantStudent']);
