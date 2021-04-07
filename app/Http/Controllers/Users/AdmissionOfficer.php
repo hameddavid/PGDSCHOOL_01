@@ -51,6 +51,7 @@ class AdmissionOfficer extends Controller
     public function getApplicationsDetails(Request $request)
     {
     }
+
     public function getApplications(Request $request)
     {
         $applications = null;
@@ -97,6 +98,29 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Unable to fetch applications', 'th' => $th], 401);
         }
     }
+
+
+    public function pg_coord_approved_recommendation_list(Request $request)
+    {
+         $applications = Application::where('coord_recommendation', 10)->latest()->get()?:null;
+
+        try {
+           
+            foreach ($applications as $key => $value) {
+                $applicant = Applicant::find($value->applicant_id)->setHidden(['password', 'token']);
+                $applications[$key]['applicant'] = $applicant;
+                $applications[$key]['assessment'] = application_assessment::where('application_id', $value->id)->first();
+                $applications[$key]['applyFor'] = $applications[$key]['assessment']['apply_for'];
+                $applications[$key]['programme'] = $this->programmeName($request, $applications[$key]['assessment']['programme_id']);
+                $applications[$key]['approvedProgramme'] = $this->programmeName($request, $applications[$key]['assessment']['approved_programme_id']);
+            }
+            return response()->json(['msg' => 'success', 'applications' => $applications]);
+        } catch (\Throwable $th) {
+            throw $th;
+            return response()->json(['error' => 'Unable to fetch Coordinators recommended Application(s)', 'th' => $th], 401);
+        }
+    }
+
     public function programmeName(Request $request, $id)
     {
         // $programme = Programme::where('id', $id)->first();
@@ -178,7 +202,7 @@ class AdmissionOfficer extends Controller
     }
 
 
-    public function pg_coord_adms_recommendation(Request $request)
+    public function pg_coord_adms_recommendation_action(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'applicant' => 'required',
@@ -193,34 +217,42 @@ class AdmissionOfficer extends Controller
         try {
             $getProgramme = Programme::find($request->programmeId);
             $dept = $this->get_dept_given_prog($getProgramme->department_id);
-           //$college = $this->get_faculty_given_dept($dept->college_id);
             $applicant = Applicant::find($request->applicant);
-            //$profile = ApplicantProfile::where('applicant_id',$request->applicant)->first();
             if (isset($getProgramme) && $applicant) {
-                if ($request->admsStatus == 'YES') {
+                if ($request->admsStatus == 'RECOMMENDED') {
                     $update = ApplicationAssessment::where('application_id', $request->applicationId)->first();
                     $update->approved_programme_id = $request->programmeId;
                     $update->save();
                     $application = Application::find($request->applicationId);
-                    //$application->status = 'approved';
                     $application->coord_recommendation = 10;
                     $application->save();
-                //     $emailParams = [
-                //         'address'=>$profile->contact_address,
-                //     'email'=>$applicant->email, 'status'=>$application->status,
-                //      'title'=>$profile->title, 'surname'=>$applicant->surname,'firstname'=>$applicant->firstname,
-                //     'session'=>$this->settings($request)->session_name,
-                //     'semester'=>$this->settings($request)->semester_name,
-                //     'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
-                //     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
-                //     'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
-                //  ];
+               
+                    return response()->json(['info' => "Admission Appproved", 'value' => "Admission Appproved", 'msg' => "success"]);
+                } elseif($request->admsStatus=='NRECOMMENDED') {
+                    $validator = Validator::make($request->all(), [
+                        'applicant' => 'required',
+                        'applicationId' => 'required',
+                        'programmeId' => 'required',
+                        'admsStatus' => 'required',
+                        'message' => 'required'
+                    ]);
+                    if ($validator->fails()) {
+                        return response()->json(['error' => 'all fields are required and Message!'], 401);
+                    }
                     
-                     //$adms_job = (new AdmissionStatusMailJob($emailParams))->delay(Carbon::now()->addSeconds(2));
-                     //dispatch($adms_job);
-                    return response()->json(['info' => "Application Appproved", 'value' => "Application Appproved", 'msg' => "success"]);
-                } else {
-                    //send admission decline email to student here
+                    $update = ApplicationAssessment::where('application_id', $request->applicationId)->first();
+                    $update->approved_programme_id = 0;
+                    $update->save();
+                    $application = Application::find($request->applicationId);
+                    $application->coord_recommendation = -1;
+                    $application->disapproved_message = $request->message;
+                    $application->save();
+               
+                    return response()->json(['info' => "Admission Disappproved", 'value' => "Admission Disappproved", 'msg' => "success"]);
+              
+                }else{
+                    return response()->json(['error' => 'Like there is Error with Admission Status sent'], 401);
+
                 }
             } else {
                 return response()->json(['error' => 'Like there is no programme for this ID'], 401);
