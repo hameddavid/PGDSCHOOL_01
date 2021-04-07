@@ -30,7 +30,8 @@ Route::any('/admissionApproved', [AdmissionOfficer::class , 'admissionApproved']
 Route::any('/admissionDenied', [AdmissionOfficer::class, 'admissionDenied']);
 
 
-Route::any('admin/logout' , [AuthController::class , 'admin_logout']);
+Route::any('logout' , [AuthController::class , 'admin_logout'])->middleware('auth:sanctum');
+
 
 
 Route::any('/all/payment', [BursaryController::class, 'allPayment']);
