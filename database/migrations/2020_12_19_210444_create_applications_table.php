@@ -27,6 +27,7 @@ class CreateApplicationsTable extends Migration
             ->onUpdate('cascade')
             ->onDelete('cascade');
             $table->set('status',['submitted under processing','awaiting submission','denied','approved','student']);
+            $table->integer('coord_recommendation')->default(0);
             $table->timestamps();
         });
     }

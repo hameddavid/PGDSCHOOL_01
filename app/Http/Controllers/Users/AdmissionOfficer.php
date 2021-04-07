@@ -178,6 +178,59 @@ class AdmissionOfficer extends Controller
     }
 
 
+    public function pg_coord_adms_recommendation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'applicant' => 'required',
+            'applicationId' => 'required',
+            'programmeId' => 'required',
+            'admsStatus' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'all fields are required!'], 401);
+        }
+        
+        try {
+            $getProgramme = Programme::find($request->programmeId);
+            $dept = $this->get_dept_given_prog($getProgramme->department_id);
+           //$college = $this->get_faculty_given_dept($dept->college_id);
+            $applicant = Applicant::find($request->applicant);
+            //$profile = ApplicantProfile::where('applicant_id',$request->applicant)->first();
+            if (isset($getProgramme) && $applicant) {
+                if ($request->admsStatus == 'YES') {
+                    $update = ApplicationAssessment::where('application_id', $request->applicationId)->first();
+                    $update->approved_programme_id = $request->programmeId;
+                    $update->save();
+                    $application = Application::find($request->applicationId);
+                    //$application->status = 'approved';
+                    $application->coord_recommendation = 10;
+                    $application->save();
+                //     $emailParams = [
+                //         'address'=>$profile->contact_address,
+                //     'email'=>$applicant->email, 'status'=>$application->status,
+                //      'title'=>$profile->title, 'surname'=>$applicant->surname,'firstname'=>$applicant->firstname,
+                //     'session'=>$this->settings($request)->session_name,
+                //     'semester'=>$this->settings($request)->semester_name,
+                //     'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
+                //     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
+                //     'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
+                //  ];
+                    
+                     //$adms_job = (new AdmissionStatusMailJob($emailParams))->delay(Carbon::now()->addSeconds(2));
+                     //dispatch($adms_job);
+                    return response()->json(['info' => "Application Appproved", 'value' => "Application Appproved", 'msg' => "success"]);
+                } else {
+                    //send admission decline email to student here
+                }
+            } else {
+                return response()->json(['error' => 'Like there is no programme for this ID'], 401);
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Error updating programme', 'th' => $th], 401);
+        }
+    }
+
+
     static function get_dept_given_prog($prog_id){
         try {
             $dept = Department::find($prog_id);

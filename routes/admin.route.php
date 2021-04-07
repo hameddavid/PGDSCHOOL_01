@@ -27,6 +27,7 @@ Route::any('/getProgrammeForApprove', [AdmissionOfficer::class , 'getProgrammeFo
 Route::any('adminAuth' , [AuthController::class , 'adminLogin']);
 Route::any('auto/login/staff' , [AuthController::class , 'auto_login_staff']);
 Route::any('/admissionApproved', [AdmissionOfficer::class , 'admissionApproved']);
+Route::any('/pgcoord/adms/recommendation', [AdmissionOfficer::class , 'pg_coord_adms_recommendation']);
 Route::any('/admissionDenied', [AdmissionOfficer::class, 'admissionDenied']);
 
 
