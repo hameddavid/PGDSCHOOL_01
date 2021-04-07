@@ -121,6 +121,29 @@ class AdmissionOfficer extends Controller
         }
     }
 
+
+    public function pg_coord_disapproved_recommendation_list(Request $request)
+    {
+         $applications = Application::where('coord_recommendation', -1)->latest()->get()?:null;
+
+        try {
+           
+            foreach ($applications as $key => $value) {
+                $applicant = Applicant::find($value->applicant_id)->setHidden(['password', 'token']);
+                $applications[$key]['applicant'] = $applicant;
+                $applications[$key]['assessment'] = application_assessment::where('application_id', $value->id)->first();
+                $applications[$key]['applyFor'] = $applications[$key]['assessment']['apply_for'];
+                $applications[$key]['programme'] = $this->programmeName($request, $applications[$key]['assessment']['programme_id']);
+                $applications[$key]['approvedProgramme'] = $this->programmeName($request, $applications[$key]['assessment']['approved_programme_id']);
+            }
+            return response()->json(['msg' => 'success', 'applications' => $applications]);
+        } catch (\Throwable $th) {
+            throw $th;
+            return response()->json(['error' => 'Unable to fetch Coordinators recommended Application(s)', 'th' => $th], 401);
+        }
+    }
+
+
     public function programmeName(Request $request, $id)
     {
         // $programme = Programme::where('id', $id)->first();
