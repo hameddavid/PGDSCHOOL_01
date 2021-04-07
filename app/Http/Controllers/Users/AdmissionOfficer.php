@@ -190,8 +190,16 @@ class AdmissionOfficer extends Controller
                      $adms_job = (new AdmissionStatusMailJob($emailParams))->delay(Carbon::now()->addSeconds(2));
                      dispatch($adms_job);
                     return response()->json(['info' => "Application Appproved", 'value' => "Application Appproved", 'msg' => "success"]);
-                } else {
-                    //send admission decline email to student here
+                } elseif($request->admsStatus == 'denied') {
+                    
+                    $applicant = Applicant::find($request->applicant);
+                    $application = Application::find($request->applicationId);
+                    $application->status = $request->admsStatus;
+                    //$application->disapproved_message = $request->denyReason;
+                    $application->save();
+                    return response()->json(['info' => "Application Denied", 'value' => "Application denied", 'msg' => "success"]);
+               
+
                 }
             } else {
                 return response()->json(['error' => 'Like there is no programme for this ID'], 401);
@@ -287,17 +295,7 @@ class AdmissionOfficer extends Controller
 
     public function admissionDenied(Request $request)
     {
-        try {
-            $applicant = Applicant::find($request->applicant);
-            $application = Application::find($request->applicationId);
-            $application->status = $request->admsStatus;
-            $application->deny_reason = $request->denyReason;
-            $application->save();
-            return response()->json(['info' => "Application Denied", 'value' => "Application denied", 'msg' => "success"]);
-        } catch (\Throwable $th) {
-            //throw $th;
-            return response()->json(['error' => 'Error updating programme', 'th' => $th], 401);
-        }
+       
     }
 
     public function getProgrammeForApprove(Request $request)
