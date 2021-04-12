@@ -368,7 +368,7 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Error getting department given department name', 'th' => $th], 401);
         }
     }
-<<<<<<< Updated upstream
+
 
 
     public function get_pg_coord_in_this_dept_giving_deptName(Request $request)
@@ -381,7 +381,7 @@ class AdmissionOfficer extends Controller
         try {
             $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
             return response()->json(['pg_coords' => $pg_coords]);
-            
+
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Error fetching PG COORD(s) for HOD', 'th' => $th], 401);
 
@@ -389,6 +389,4 @@ class AdmissionOfficer extends Controller
     }
 
 }
-=======
-}
->>>>>>> Stashed changes
+
