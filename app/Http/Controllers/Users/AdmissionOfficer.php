@@ -69,7 +69,7 @@ class AdmissionOfficer extends Controller
                 return $query;
             });
             $applications = collect($applications->latest()->get());
-            
+
         } else {
            // $applications = Application::where('status', $request->status)->latest()->get();
            $status = $request->status;
@@ -82,7 +82,7 @@ class AdmissionOfficer extends Controller
         }
 
         try {
-           
+
             foreach ($applications as $key => $value) {
                 //return $value->applicant_id;
 
@@ -106,7 +106,7 @@ class AdmissionOfficer extends Controller
          $applications = Application::where('coord_recommendation', 10)->latest()->get()?:null;
 
         try {
-           
+
             foreach ($applications as $key => $value) {
                 $applicant = Applicant::find($value->applicant_id)->setHidden(['password', 'token']);
                 $applications[$key]['applicant'] = $applicant;
@@ -128,7 +128,7 @@ class AdmissionOfficer extends Controller
          $applications = Application::where('coord_recommendation', -1)->latest()->get()?:null;
 
         try {
-           
+
             foreach ($applications as $key => $value) {
                 $applicant = Applicant::find($value->applicant_id)->setHidden(['password', 'token']);
                 $applications[$key]['applicant'] = $applicant;
@@ -210,19 +210,22 @@ class AdmissionOfficer extends Controller
                     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
                     'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
                  ];
-                    //return view('emails.admissionApproved', ['emailParams'=>$emailParams]);
+                    DB::table('applications')->where('id',$request->applicationId)->update([
+                        'admissionLetter'=> view('emails.admissionApproved', ['emailParams'=>$emailParams])
+                    ]);
+                    // return view('emails.admissionApproved', ['emailParams'=>$emailParams]);
                      $adms_job = (new AdmissionStatusMailJob($emailParams))->delay(Carbon::now()->addSeconds(2));
                      dispatch($adms_job);
                     return response()->json(['info' => "Application Appproved", 'value' => "Application Appproved", 'msg' => "success"]);
                 } elseif($request->admsStatus == 'denied') {
-                    
+
                     $applicant = Applicant::find($request->applicant);
                     $application = Application::find($request->applicationId);
                     $application->status = $request->admsStatus;
                     //$application->disapproved_message = $request->denyReason;
                     $application->save();
                     return response()->json(['info' => "Application Denied", 'value' => "Application denied", 'msg' => "success"]);
-               
+
 
                 }
             } else {
@@ -245,7 +248,7 @@ class AdmissionOfficer extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => 'all fields are required!'], 401);
         }
-        
+
         try {
             $getProgramme = Programme::find($request->programmeId);
             $dept = $this->get_dept_given_prog($getProgramme->department_id);
@@ -258,7 +261,7 @@ class AdmissionOfficer extends Controller
                     $application = Application::find($request->applicationId);
                     $application->coord_recommendation = 10;
                     $application->save();
-               
+
                     return response()->json(['info' => "Admission Appproved", 'value' => "Admission Appproved", 'msg' => "success"]);
                 } elseif($request->admsStatus=='NRECOMMENDED') {
                     $validator = Validator::make($request->all(), [
@@ -271,7 +274,7 @@ class AdmissionOfficer extends Controller
                     if ($validator->fails()) {
                         return response()->json(['error' => 'all fields are required and Message!'], 401);
                     }
-                    
+
                     $update = ApplicationAssessment::where('application_id', $request->applicationId)->first();
                     $update->approved_programme_id = 0;
                     $update->save();
@@ -279,9 +282,9 @@ class AdmissionOfficer extends Controller
                     $application->coord_recommendation = -1;
                     $application->disapproved_message = $request->message;
                     $application->save();
-               
+
                     return response()->json(['info' => "Admission Disappproved", 'value' => "Admission Disappproved", 'msg' => "success"]);
-              
+
                 }else{
                     return response()->json(['error' => 'Like there is Error with Admission Status sent'], 401);
 
@@ -319,7 +322,7 @@ class AdmissionOfficer extends Controller
 
     public function admissionDenied(Request $request)
     {
-       
+
     }
 
     public function getProgrammeForApprove(Request $request)
@@ -365,6 +368,7 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Error getting department given department name', 'th' => $th], 401);
         }
     }
+<<<<<<< Updated upstream
 
 
     public function get_pg_coord_in_this_dept_giving_deptName(Request $request)
@@ -385,3 +389,6 @@ class AdmissionOfficer extends Controller
     }
 
 }
+=======
+}
+>>>>>>> Stashed changes

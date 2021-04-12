@@ -85,7 +85,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
                     <p align="right"><font color="#990099"><i>P.M.B. 230,Ede,<br />
 
-                            </i></font><font color="#990099"> <i>        
+                            </i></font><font color="#990099"> <i>
 
                                 Osun State Nigeria,</i></font><br />
 
@@ -130,17 +130,17 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
             <tr>
 
                 <td colspan="2" valign="top"><p>I am pleased to inform you that following
-                 your application for postgraduate programme 
+                 your application for postgraduate programme
                 in Redeemer’s University, you have been offered admission into
-                <strong> {{$emailParams['apply_for']}}</strong> 
-                Degree in <strong>{{$emailParams['programme']}}</strong> 
+                <strong> {{$emailParams['apply_for']}}</strong>
+                Degree in <strong>{{$emailParams['programme']}}</strong>
                 in the Department of <strong>{{$emailParams['dept']}}</strong>,
-                 Faculty of <strong>{{$emailParams['college']}}</strong>. 
-                  <em>Your admission is for the {{$emailParams['semester']}} 
+                 Faculty of <strong>{{$emailParams['college']}}</strong>.
+                  <em>Your admission is for the {{$emailParams['semester']}}
                 of {{$emailParams['session']}} academic session </em>. </p>
 
                 <p>The graduate programmes at Redeemer’s University are among the
-                 very best in Nigeria. We have outstanding academic staff, 
+                 very best in Nigeria. We have outstanding academic staff,
                  and a stimulating intellectual atmosphere that enhances thorough research.</p>
 
                     <p>Your mode of study is full-time, and the minimum duration of your
@@ -150,7 +150,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
                     <p>Please, contact the College of Postgraduate Studies as soon as possible for further information on registration. Late registration will attract a penalty of Ten Thousand Naira (N10, 000.00). At the point of registration, you will be required to present original copies of your credentials for sighting along with three (3) sets of photocopies and four (5) passport photographs. </p>
 
                    <p>The schedule of payment of school fees, including accommodation fee is available on the University Website (www.run.edu.ng/cpgs). The College may allow for payment in two (2) installments of 60% and 40% for First and Second Semesters respectively.</p>
-            
+
                 <p> Please note that the Redeemer’s University is a Faith-based Institution where moral values and Christian norms are entrenched.</p>
             </tr>
 
@@ -158,7 +158,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
                 <td colspan="2"><p>We look forward to meeting you early.</p>
                     <p>Yours truly,</p>
-                    <img  src="{{URL::asset('/admin/adms.jpg')}}" /><br />      
+                    <img  src="{{URL::asset('/admin/adms.jpg')}}" /><br />
                      <span id="yui_3_7_2_1_1358250129829_2527" lang="EN-GB"
                       xml:lang="EN-GB"><strong>Mr. E. K. Adeyanju,</strong>
                       </span><br />
@@ -178,4 +178,6 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
     </body>
 
 </html>
+
+
 

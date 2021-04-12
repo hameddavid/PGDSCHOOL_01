@@ -32,9 +32,11 @@ class AdmissionStatusMail extends Mailable
     public function build()
     {
         if($this->emailParams['status'] == 'approved')
-           {return $this->view('email.admissionApproved');} 
+           {
+               return $this->view('emails.admissionApproved' );
+            }
         else{
-            return $this->view('email.admissionDeclined');  
+            return $this->view('emails.admissionDeclined');
         }
     }
 }
