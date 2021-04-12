@@ -13,6 +13,7 @@ use App\Models\Setting;
 use App\Models\Programme;
 use App\Models\Department;
 use App\Models\College;
+use App\Models\PGLecturer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -335,7 +336,7 @@ class AdmissionOfficer extends Controller
         // $deptName = 'COMPUTER SCIENCE';
         $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
         if ($validator->fails()) {
-            return response()->json(['error' => 'all fields are required!'], 401);
+            return response()->json(['error' => 'department name is required!'], 401);
         }
        $dept = $this->get_dept_given_deptName($request->deptName);
        $programmes = $this->get_progs_given_deptID($dept->id);
@@ -364,4 +365,23 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Error getting department given department name', 'th' => $th], 401);
         }
     }
+
+
+    public function get_pg_coord_in_this_dept_giving_deptName(Request $request)
+    {
+        $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'department name is required!'], 401);
+        }
+
+        try {
+            $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
+            return response()->json(['pg_coords' => $pg_coords]);
+            
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Error fetching PG COORD(s) for HOD', 'th' => $th], 401);
+
+        }
+    }
+
 }

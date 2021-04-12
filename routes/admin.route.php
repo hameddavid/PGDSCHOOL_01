@@ -33,6 +33,11 @@ Route::any('/pgcoord/disapproved/recommendation/list', [AdmissionOfficer::class 
 Route::any('/admissionDenied', [AdmissionOfficer::class, 'admissionDenied']);
 
 
+Route::any('/get/pg/coord/for/hod', [AdmissionOfficer::class, 'get_pg_coord_in_this_dept_giving_deptName']);
+
+
+
+
 Route::any('logout' , [AuthController::class , 'admin_logout'])->middleware('auth:sanctum');
 
 
