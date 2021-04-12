@@ -384,4 +384,31 @@ class AdmissionOfficer extends Controller
         }
     }
 
+
+    public function enable_disable_pg_coords(Request $request)
+    {
+        $validator = Validator::make($request->all(), [ 'id' => 'required' ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Lecturer ID is required!'], 401);
+        }
+
+        try {
+            $record = PGLecturer::find($request);
+            if($record){
+                 if($record->is_verified == 0){
+                     $record->is_verified = 10;
+                     $record->save();
+                    return response()->json(['Enable-status' => 'Lecturer Enabled']);}
+                 else{$record->is_verified=0;
+                    $record->save();
+                    return response()->json(['Disable-status' => 'Lecturer Disabled']);}
+            }
+            return response()->json(['Error' => 'Error enabling/disabling lecturer']);
+            
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Error enabling/disabling lecturer', 'th' => $th], 401);
+
+        } 
+    }
+
 }
