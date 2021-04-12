@@ -398,7 +398,7 @@ class AdmissionOfficer extends Controller
         }
 
         try {
-            $record = PGLecturer::find($request);
+            $record = PGLecturer::find($request->id);
             if($record){
                  if($record->is_verified == 0){
                      $record->is_verified = 10;
