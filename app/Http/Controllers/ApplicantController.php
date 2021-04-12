@@ -643,4 +643,13 @@ class ApplicantController extends Controller
         }
         return $validator;
     }
+
+    public function getAdmissionLetter(Request $request)
+    {
+        $letter = Application::find($request->applicationId);
+        return response()->json(['msg'=>'success', 'value'=>$letter->admissionLetter]);
+    }
+
+
+
 }
