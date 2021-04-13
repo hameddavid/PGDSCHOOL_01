@@ -59,26 +59,38 @@ class AdmissionOfficer extends Controller
         $dept = null;
         $programmes = null;
         if($request->has('deptName') && $request->filled('deptName')){
+            //no dept in pg school
             $dept = $this->get_dept_given_deptName($request->deptName);
             $programmes = $this->get_progs_given_deptID($dept->id);
-        }
+
         if ($request->status == 'all') {
-            $applications = Application::when($programmes, function($query,$programmes){
-                return $query->whereIn('id', $programmes);
-            }, function($query){
-                return $query;
-            });
-            $applications = collect($applications->latest()->get());
+          $applications = Application::select('applications.*')->join('application_assessment', function($join) use($programmes){
+                $join->on('applications.id', '=', 'application_assessment.application_id')
+                ->whereIn('application_assessment.programme_id',$programmes);
+            })->latest()->get();
+
+            $applications = collect($applications);
+            // return $applications;
 
         } else {
            // $applications = Application::where('status', $request->status)->latest()->get();
            $status = $request->status;
-            $applications = Application::when($programmes, function($query,$programmes) use($status) {
-                return $query->where('status', $status)->whereIn('id', $programmes);
-            }, function($query) use($status){
-                return $query->where('status', $status);
-            });
-            $applications = collect($applications->latest()->get());
+           $applications = Application::select('applications.*')->join('application_assessment', function($join) use($programmes){
+                $join->on('applications.id', '=', 'application_assessment.application_id')
+                ->whereIn('application_assessment.programme_id',$programmes);
+            })->where('applications.status', $status)->latest()->get();
+
+            $applications = collect($applications);
+        }
+    }
+        //admin fetch
+        else{
+            $applications = Application::when($request->status == 'all' ,function($q) use($request){
+                $q->whereNotNull('status');
+            })->when($request->status != 'all', function($q) use($request) {
+                $q->where('status', $request->status);
+            })->latest()->get();
+
         }
 
         try {
@@ -409,11 +421,11 @@ class AdmissionOfficer extends Controller
                     return response()->json(['Disable-status' => 'Lecturer Disabled']);}
             }
             return response()->json(['Error' => 'Error enabling/disabling lecturer']);
-            
+
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Error enabling/disabling lecturer', 'th' => $th], 401);
 
-        } 
+        }
     }
 
 }
