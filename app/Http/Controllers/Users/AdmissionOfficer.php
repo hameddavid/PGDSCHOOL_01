@@ -379,6 +379,7 @@ class AdmissionOfficer extends Controller
         }
 
         try {
+            // $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
             $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
             return response()->json(['pg_coords' => $pg_coords]);
 
