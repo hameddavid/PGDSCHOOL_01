@@ -452,6 +452,12 @@ class ApplicantController extends Controller
 
     public function viewProfileImage(Request $request)
     {
+        //get Image for Admin
+        if($request->has('imgPath')){
+            $file = Storage::get($request->imgPath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        }
+
         $user = $request->user();
         $id = null;
         if ($user->type == 'applicant') {
