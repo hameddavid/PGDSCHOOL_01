@@ -59,26 +59,38 @@ class AdmissionOfficer extends Controller
         $dept = null;
         $programmes = null;
         if($request->has('deptName') && $request->filled('deptName')){
+            //no dept in pg school
             $dept = $this->get_dept_given_deptName($request->deptName);
             $programmes = $this->get_progs_given_deptID($dept->id);
-        }
+
         if ($request->status == 'all') {
-            $applications = Application::when($programmes, function($query,$programmes){
-                return $query->whereIn('id', $programmes);
-            }, function($query){
-                return $query;
-            });
-            $applications = collect($applications->latest()->get());
+          $applications = Application::select('applications.*')->join('application_assessment', function($join) use($programmes){
+                $join->on('applications.id', '=', 'application_assessment.application_id')
+                ->whereIn('application_assessment.programme_id',$programmes);
+            })->latest()->get();
+
+            $applications = collect($applications);
+            // return $applications;
 
         } else {
            // $applications = Application::where('status', $request->status)->latest()->get();
            $status = $request->status;
-            $applications = Application::when($programmes, function($query,$programmes) use($status) {
-                return $query->where('status', $status)->whereIn('id', $programmes);
-            }, function($query) use($status){
-                return $query->where('status', $status);
-            });
-            $applications = collect($applications->latest()->get());
+           $applications = Application::select('applications.*')->join('application_assessment', function($join) use($programmes){
+                $join->on('applications.id', '=', 'application_assessment.application_id')
+                ->whereIn('application_assessment.programme_id',$programmes);
+            })->where('applications.status', $status)->latest()->get();
+
+            $applications = collect($applications);
+        }
+    }
+        //admin fetch
+        else{
+            $applications = Application::when($request->status == 'all' ,function($q) use($request){
+                $q->whereNotNull('status');
+            })->when($request->status != 'all', function($q) use($request) {
+                $q->where('status', $request->status);
+            })->latest()->get();
+
         }
 
         try {
@@ -99,7 +111,6 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Unable to fetch applications', 'th' => $th], 401);
         }
     }
-
 
     public function pg_coord_approved_recommendation_list(Request $request)
     {
@@ -203,7 +214,8 @@ class AdmissionOfficer extends Controller
                     $emailParams = [
                         'address'=>$profile->contact_address,
                     'email'=>$applicant->email, 'status'=>$application->status,
-                     'title'=>$profile->title, 'surname'=>$applicant->surname,'firstname'=>$applicant->firstname,
+                     'title'=>$profile->title, 'surname'=>$applicant->surname,
+                     'firstname'=>$applicant->firstname,'lastname'=>$applicant->lastname,
                     'session'=>$this->settings($request)->session_name,
                     'semester'=>$this->settings($request)->semester_name,
                     'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,

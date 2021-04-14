@@ -107,7 +107,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
             <tr>
 
-                <td colspan="2"><p><span class="surname">{{$emailParams['surname']}}</span>, {{$emailParams['firstname']}}<br />
+                <td colspan="2"><p><span class="surname">{{$emailParams['surname']}}</span>, {{$emailParams['firstname']}} &nbsp; {{$emailParams['lastname']}}<br />
 
                 {{$emailParams['address']}}<br />
 
