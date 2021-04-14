@@ -192,8 +192,8 @@ class AdmissionOfficer extends Controller
             'applicationId' => 'required',
             'programmeId' => 'required',
             'admsStatus' => 'required',
-            'semesterName' => 'sometimes|string',
-            'sessionName' => 'sometimes|string',
+            'semester_name' => 'sometimes|string',
+            'session_name' => 'sometimes|string',
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => 'all fields are required!'], 401);
@@ -212,16 +212,16 @@ class AdmissionOfficer extends Controller
                     $update->save();
                     $application = Application::find($request->applicationId);
                     $application->status = 'approved';
-                    $application->semester_admitted = $request->semesterName;
-                    $application->session_admitted = $request->sessionName;
+                    $application->semester_admitted = $request->semester_name;
+                    $application->session_admitted = $request->session_name;
                     $application->save();
                     $emailParams = [
                         'address'=>$profile->contact_address,
                     'email'=>$applicant->email, 'status'=>$application->status,
                      'title'=>$profile->title, 'surname'=>$applicant->surname,
                      'firstname'=>$applicant->firstname,'lastname'=>$applicant->lastname,
-                    'session'=>$request->sessionName,
-                    'semester'=>$request->semesterName,
+                    'session'=>$request->session_name,
+                    'semester'=>$request->semester_name,
                     'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
                     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
                     'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
@@ -447,7 +447,7 @@ class AdmissionOfficer extends Controller
     public static  function settings2(){
      
         $settings = Setting::orderBy('created_at')->get();
-        return $settings;
+        return response()->json(['settings' => $settings ]);
     }
 
 }
