@@ -191,12 +191,14 @@ class AdmissionOfficer extends Controller
             'applicant' => 'required',
             'applicationId' => 'required',
             'programmeId' => 'required',
-            'admsStatus' => 'required'
+            'admsStatus' => 'required',
+            'semesterName' => 'sometimes|string',
+            'sessionName' => 'sometimes|string',
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => 'all fields are required!'], 401);
         }
-        //Use try/catch for application_assessment
+       
         try {
             $getProgramme = Programme::find($request->programmeId);
             $dept = $this->get_dept_given_prog($getProgramme->department_id);
@@ -210,14 +212,16 @@ class AdmissionOfficer extends Controller
                     $update->save();
                     $application = Application::find($request->applicationId);
                     $application->status = 'approved';
+                    $application->semester_admitted = $request->semesterName;
+                    $application->session_admitted = $request->sessionName;
                     $application->save();
                     $emailParams = [
                         'address'=>$profile->contact_address,
                     'email'=>$applicant->email, 'status'=>$application->status,
                      'title'=>$profile->title, 'surname'=>$applicant->surname,
                      'firstname'=>$applicant->firstname,'lastname'=>$applicant->lastname,
-                    'session'=>$this->settings($request)->session_name,
-                    'semester'=>$this->settings($request)->semester_name,
+                    'session'=>$request->sessionName,
+                    'semester'=>$request->semesterName,
                     'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
                     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
                     'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
@@ -387,7 +391,7 @@ class AdmissionOfficer extends Controller
     {
 
         try {
-            if($request->has('deptName')){
+            if($request->has('deptName') && $request->filled('deptName')){
                 $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
                 if ($validator->fails()) {
                     return response()->json(['error' => 'department name is required!'], 401);
@@ -397,7 +401,7 @@ class AdmissionOfficer extends Controller
             }
             elseif($request->has('role') && $request->role == "admin"){
                 $all_pg_users = PGLecturer::orderBy('created_at')->get();
-                return response()->json(['all_pg_users' => $all_pg_users]);
+                return response()->json(['pg_coords' => $all_pg_users]);
             }
 
            else{
@@ -438,6 +442,12 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Error enabling/disabling lecturer', 'th' => $th], 401);
 
         }
+    }
+
+    public static  function settings2(){
+     
+        $settings = Setting::orderBy('created_at')->get();
+        return $settings;
     }
 
 }

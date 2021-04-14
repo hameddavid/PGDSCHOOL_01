@@ -3,7 +3,9 @@
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Users\AdmissionOfficer;
+use App\Models\Application;
 
 
 /*
@@ -16,6 +18,19 @@ use App\Http\Controllers\Users\AdmissionOfficer;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+// Route::get('/up', function (Request $request) {
+//    $apps = Application::all();
+//    foreach ($apps as $app){
+//     $application = Application::find($app->id);
+//     $val = AdmissionOfficer::settings($request)->session_name;
+//     $application->application_number = "RUN/CPGS/".substr($val,2,2)."-". substr($val,7,2)."/".$application->id;
+//     $application->save();
+//     //return $app;
+//    }
+//    return $apps; 
+// });
 
 Route::get('/', function (Request $request) {
     return "hello";
