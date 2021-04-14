@@ -385,15 +385,24 @@ class AdmissionOfficer extends Controller
 
     public function get_pg_coord_in_this_dept_giving_deptName(Request $request)
     {
-        $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => 'department name is required!'], 401);
-        }
 
         try {
-            // $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
-            $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
-            return response()->json(['pg_coords' => $pg_coords]);
+            if($request->has('deptName')){
+                $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
+                if ($validator->fails()) {
+                    return response()->json(['error' => 'department name is required!'], 401);
+                }
+                $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
+                return response()->json(['pg_coords' => $pg_coords]);
+            }
+            elseif($request->has('role') && $request->role == "admin"){
+                $all_pg_users = PGLecturer::orderBy('created_at')->get();
+                return response()->json(['all_pg_users' => $all_pg_users]);
+            }
+
+           else{
+            return response()->json([ 'error'=>'No parameter sent'],401);
+           }
 
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Error fetching PG COORD(s) for HOD', 'th' => $th], 401);
@@ -415,6 +424,8 @@ class AdmissionOfficer extends Controller
             if($record){
                  if($record->is_verified == 0){
                      $record->is_verified = 10;
+                     $record->semester_last_seen =  $this->settings($request)->semester_name; 
+                     $record->session_last_seen = $this->settings($request)->session_name;
                      $record->save();
                     return response()->json(['Enable-status' => 'Lecturer Enabled']);}
                  else{$record->is_verified=0;

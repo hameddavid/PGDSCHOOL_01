@@ -78,7 +78,7 @@ class AuthController extends Controller
         $name = $final['status']."_".$final['uid']."_".$final['deptid'];
         $record = PGLecturer::find($name);
         if($record){
-           if($record->is_verified == 10 && $record->semester_last_seen == AdmissionOfficer::settings($request)->semester_name ){
+           if($record->is_verified == 10 && $record->semester_last_seen == AdmissionOfficer::settings($request)->session_last_seen ){
             $createToken = $record->createToken('autoLogin')->plainTextToken;
             $response = ['status_code'=>200, 'msg'=>'success', 'record' => $record, 'token'=>$createToken];
             return response()->json($response);
