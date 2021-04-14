@@ -422,11 +422,11 @@ class AdmissionOfficer extends Controller
                     return response()->json(['Disable-status' => 'Lecturer Disabled']);}
             }
             return response()->json(['Error' => 'Error enabling/disabling lecturer']);
-            
+
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Error enabling/disabling lecturer', 'th' => $th], 401);
 
-        } 
+        }
     }
 
 }
