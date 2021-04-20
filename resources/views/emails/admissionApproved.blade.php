@@ -99,7 +99,8 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
             <tr>
 
-            <td width="36%">RUN/REG/PG/ADM/{{$emailParams['progCode']}}/{{substr($emailParams['session'],2,2)}}-{{substr($emailParams['session'],7,2)}}/{{$emailParams['applicant_id']}}</td>
+            <td width="36%">RUN/REG/PG/ADM/{{$emailParams['progCode']}}/
+                {{substr($emailParams['session'],2,2)}}-{{substr($emailParams['session'],7,2)}}/{{$emailParams['applicant_id']}}</td>
 
                 <td width="37%"><div align="right">{{$emailParams['date_admitted']}}</div></td>
 
@@ -144,7 +145,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
                  and a stimulating intellectual atmosphere that enhances thorough research.</p>
 
                     <p>Your mode of study is full-time, and the minimum duration of your
-                     programme is three (3) semesters, at the University permanent Campus, Ede, Osun State.</p>
+                     programme is {{$emailParams['duration']}}, at the University permanent Campus, Ede, Osun State.</p>
 
 
                     <p>Please, contact the College of Postgraduate Studies as soon as possible for further information on registration. Late registration will attract a penalty of Ten Thousand Naira (N10, 000.00). At the point of registration, you will be required to present original copies of your credentials for sighting along with three (3) sets of photocopies and four (5) passport photographs. </p>

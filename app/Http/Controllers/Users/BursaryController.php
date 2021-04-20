@@ -79,4 +79,10 @@ class BursaryController extends Controller
         dd($data[0]);
         return response()->json(['success' => 'fee uploaded successfully'], 201);
     }
+
+
+    public function all_application_fee_paid(Request $request)
+    {
+        
+    }
 }

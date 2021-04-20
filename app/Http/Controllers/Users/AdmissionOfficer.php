@@ -220,9 +220,10 @@ class AdmissionOfficer extends Controller
                     'email'=>$applicant->email, 'status'=>$application->status,
                      'title'=>$profile->title, 'surname'=>$applicant->surname,
                      'firstname'=>$applicant->firstname,'lastname'=>$applicant->lastname,
+                     'duration'=>$getProgramme->duration,
                     'session'=>$request->session_name,
                     'semester'=>$request->semester_name,
-                    'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
+                    'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->programme_id,
                     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
                     'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
                  ];
