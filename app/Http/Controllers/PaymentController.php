@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+use App\Http\Controllers\Users\AdmissionOfficer;
+
 class PaymentController extends Controller
 {
     public function Application(Request $request)
@@ -46,6 +48,11 @@ class PaymentController extends Controller
         $application->applicant_id = $user->id;
         $application->rrr = $request->paymentReference;
         $application->save();
+        $application = Application::find($application->id);
+        $val = AdmissionOfficer::settings($request)->session_name;
+        $application->application_number = "RUN/CPGS/".substr($val,2,2)."-". substr($val,7,2)."/".$application->id;
+        $application->save();
+        
 
         //aplication refree
         DB::table('application_refree')->insert(['application_id' => $application->id]);

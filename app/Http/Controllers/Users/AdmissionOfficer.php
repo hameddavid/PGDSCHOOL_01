@@ -112,7 +112,6 @@ class AdmissionOfficer extends Controller
         }
     }
 
-
     public function pg_coord_approved_recommendation_list(Request $request)
     {
          $applications = Application::where('coord_recommendation', 10)->latest()->get()?:null;
@@ -192,12 +191,14 @@ class AdmissionOfficer extends Controller
             'applicant' => 'required',
             'applicationId' => 'required',
             'programmeId' => 'required',
-            'admsStatus' => 'required'
+            'admsStatus' => 'required',
+            'semester_name' => 'sometimes|string',
+            'session_name' => 'sometimes|string',
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => 'all fields are required!'], 401);
         }
-        //Use try/catch for application_assessment
+       
         try {
             $getProgramme = Programme::find($request->programmeId);
             $dept = $this->get_dept_given_prog($getProgramme->department_id);
@@ -211,14 +212,18 @@ class AdmissionOfficer extends Controller
                     $update->save();
                     $application = Application::find($request->applicationId);
                     $application->status = 'approved';
+                    $application->semester_admitted = $request->semester_name;
+                    $application->session_admitted = $request->session_name;
                     $application->save();
                     $emailParams = [
                         'address'=>$profile->contact_address,
                     'email'=>$applicant->email, 'status'=>$application->status,
-                     'title'=>$profile->title, 'surname'=>$applicant->surname,'firstname'=>$applicant->firstname,
-                    'session'=>$this->settings($request)->session_name,
-                    'semester'=>$this->settings($request)->semester_name,
-                    'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->code,
+                     'title'=>$profile->title, 'surname'=>$applicant->surname,
+                     'firstname'=>$applicant->firstname,'lastname'=>$applicant->lastname,
+                     'duration'=>$getProgramme->duration,
+                    'session'=>$request->session_name,
+                    'semester'=>$request->semester_name,
+                    'programme'=>$getProgramme->programme,'progCode'=>$getProgramme->programme_id,
                     'applicant_id'=>$applicant->id, 'date_admitted'=> date("F d, Y"),
                     'apply_for'=>$update->apply_for,'dept'=>$dept->department,'college'=>$college->college
                  ];
@@ -385,14 +390,24 @@ class AdmissionOfficer extends Controller
 
     public function get_pg_coord_in_this_dept_giving_deptName(Request $request)
     {
-        $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => 'department name is required!'], 401);
-        }
 
         try {
-            $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
-            return response()->json(['pg_coords' => $pg_coords]);
+            if($request->has('deptName') && $request->filled('deptName')){
+                $validator = Validator::make($request->all(), [ 'deptName' => 'required' ]);
+                if ($validator->fails()) {
+                    return response()->json(['error' => 'department name is required!'], 401);
+                }
+                $pg_coords = PGLecturer::where('lecturer_category', 'PG-COORD')->where('deptname', $request->deptName)->orderBy('created_at')->get();
+                return response()->json(['pg_coords' => $pg_coords]);
+            }
+            elseif($request->has('role') && $request->role == "admin"){
+                $all_pg_users = PGLecturer::orderBy('created_at')->get();
+                return response()->json(['pg_coords' => $all_pg_users]);
+            }
+
+           else{
+            return response()->json([ 'error'=>'No parameter sent'],401);
+           }
 
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Error fetching PG COORD(s) for HOD', 'th' => $th], 401);
@@ -414,6 +429,8 @@ class AdmissionOfficer extends Controller
             if($record){
                  if($record->is_verified == 0){
                      $record->is_verified = 10;
+                     $record->semester_last_seen =  $this->settings($request)->semester_name; 
+                     $record->session_last_seen = $this->settings($request)->session_name;
                      $record->save();
                     return response()->json(['Enable-status' => 'Lecturer Enabled']);}
                  else{$record->is_verified=0;
@@ -426,6 +443,12 @@ class AdmissionOfficer extends Controller
             return response()->json(['error' => 'Error enabling/disabling lecturer', 'th' => $th], 401);
 
         }
+    }
+
+    public static  function settings2(){
+     
+        $settings = Setting::orderBy('created_at')->get();
+        return response()->json(['settings' => $settings ]);
     }
 
 }

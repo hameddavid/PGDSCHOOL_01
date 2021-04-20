@@ -11,5 +11,5 @@ class PGLecturer extends Model
     use HasFactory, HasApiTokens;
 
     protected $table = 'p_g_lecturers';
-   // protected $primaryKey = 'lecturer_id';
+    //protected $primaryKey = 'id';
 }

@@ -29,6 +29,12 @@ use Illuminate\Validation\ValidationException;
 |
 */
 
+
+
+Route::post('testt', [PaymentController::class ,'createApplication']);
+
+
+
 Route::post('pgCreateAccount', [ApplicantController::class ,'pgCreateAccount']);
 Route::post('pgLogin', [ApplicantController::class , 'pgLogin']);
 Route::post('pgStudentLogin', [StudentController::class , 'pgStudentLogin']);
