@@ -58,6 +58,7 @@ class StudentController extends Controller
         $progCode = Programme::find($application_assessment->approved_programme_id);
         $matric_no = "RUN/REG/PG/ADM/".$progCode->code.'/'.$session_name.'/'.$applicant->id;
         if ($check) {
+            //update if application Id is different
             return response()->json(['msg'=>'success', 'info'=>'Login as a student']);
         }else{
             $student = new Student();
