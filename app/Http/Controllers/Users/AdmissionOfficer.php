@@ -19,8 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Jobs\AdmissionStatusMailJob;
-
-
+use App\Models\Notification;
 
 class AdmissionOfficer extends Controller
 {
@@ -361,9 +360,30 @@ class AdmissionOfficer extends Controller
     }
 
 
-    public function admissionDenied(Request $request)
+    public function admissionPending(Request $request)
     {
-
+        $validator = Validator::make($request->all(), [
+            // 'applicant' => 'required',
+            'applicationId' => 'required',
+            'pending_message'=>'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Application required'], 401);
+        }
+        $application = Application::find($request->applicationId);
+        $application->status = 'pending';
+        $application->pending_message = $request->pending_message ;
+        $application->save();
+        $notification = new Notification;
+        $notification->type = "Admisssion";
+        $notification->applicants = $application->applicant_id;
+        $data = [
+            "pending_message"=>$request->pending_message,
+            "type"=>"Admission",
+        ];
+        $notification->data = $data;
+        $notification->save();
+        return response()->json(['msg'=>'success' , 'value'=> "Admission Pending"]);
     }
 
     public function getProgrammeForApprove(Request $request)

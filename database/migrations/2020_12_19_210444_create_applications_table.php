@@ -26,9 +26,10 @@ class CreateApplicationsTable extends Migration
             ->constrained('applicants')
             ->onUpdate('cascade')
             ->onDelete('cascade');
-            $table->set('status',['submitted under processing','awaiting submission','denied','approved','student']);
+            $table->set('status',['submitted under processing','awaiting submission','denied','approved','student','pending']);
             $table->integer('coord_recommendation')->default(0);
             $table->longText('disapproved_message')->nullable();
+            $table->longText('pending_message')->nullable();
             $table->longText("admissionLetter")->nullable();
             $table->timestamps();
         });

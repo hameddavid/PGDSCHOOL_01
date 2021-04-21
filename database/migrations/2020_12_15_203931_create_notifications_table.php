@@ -11,6 +11,15 @@ class CreateNotificationsTable extends Migration
      *
      * @return void
      */
+
+     /**
+     * type admission
+     * applicants is applicantId
+     * students in StudentId
+     * data [type=> notification type]
+     *
+     *
+     */
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
@@ -27,6 +36,7 @@ class CreateNotificationsTable extends Migration
             $table->boolean('activated')->default(false);
             $table->timestamps();
         });
+
     }
 
     /**
