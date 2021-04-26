@@ -168,16 +168,15 @@ class RemitaController extends Controller
        try {
         $apiHash = hash('sha512', $rrr . $apiKey . $merchantId);
         $response = Http::get('https://login.remita.net/remita/ecomm/' . $merchantId . '/' . $rrr . "/" . $apiHash . '/status.reg');
-
-       } catch (\Throwable $th) {
-           //throw $th;
-           return response()->jsom(['error'=>'Unable check transaction','msg'=>$th],401);
-       }
         Log::info($response);
         $data = $response->json();
         $transaction = Transaction::where('rrr', $rrr)->first();
         $transaction->amount = $data['amount'];
         $transaction->save();
         return response()->json(['msg'=>'success', 'value'=>'Payment cross checked']);
+       } catch (\Throwable $th) {
+           //throw $th;
+           return response()->jsom(['error'=>'Unable check transaction','msg'=>$th],401);
+       }
         }
 }
