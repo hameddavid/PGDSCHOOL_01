@@ -60,6 +60,7 @@ Route::post('upload',function(Request $request){
 
 // Route::post('resetPassword', [AuthController::class , 'ForgotPassword'])->middleware('guest');
 Route::post('checkRRRStatus',[RemitaController::class,'checkRRRStatus']);
+Route::post('crossCheckPayment', [RemitaController::class, 'crossCheckPayment'])->middleware('auth:sanctum');
 Route::post('updatePaymentStatus',[RemitaController::class, 'updatePaymentStatus'])->middleware('auth:sanctum');
 
 Route::post('getProgrammes', [ProgrammesController::class, 'getProgrammes']);

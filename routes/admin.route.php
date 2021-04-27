@@ -33,7 +33,7 @@ Route::any('/pgcoord/adms/recommendation', [AdmissionOfficer::class , 'pg_coord_
 Route::any('/pgcoord/approved/recommendation/list', [AdmissionOfficer::class , 'pg_coord_approved_recommendation_list']);
 Route::any('/pgcoord/disapproved/recommendation/list', [AdmissionOfficer::class , 'pg_coord_disapproved_recommendation_list']);
 Route::any('/admissionDenied', [AdmissionOfficer::class, 'admissionDenied']);
-
+Route::any('/admissionPending', [AdmissionOfficer::class, 'admissionPending']);
 
 Route::any('/get/pg/coords/for/hod', [AdmissionOfficer::class, 'get_pg_coord_in_this_dept_giving_deptName']);
 Route::any('/enable/or/disable/pg/coords', [AdmissionOfficer::class, 'enable_disable_pg_coords']);

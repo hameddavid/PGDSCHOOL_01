@@ -30,6 +30,7 @@ class SendPaymentNotification implements ShouldQueue
     public function handle(RemitaBank $event)
     {
         // $userId = null;
+        //IMPORTANT NOTE
         //transaction_id is the userID due to morph relationship
         $user = strval($event->data['transaction_type'])::find($event->data['transaction_id'])->setHidden(
             ['password',

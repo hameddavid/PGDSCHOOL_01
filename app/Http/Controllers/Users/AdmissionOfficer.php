@@ -19,8 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Jobs\AdmissionStatusMailJob;
-
-
+use App\Models\Notification;
 
 class AdmissionOfficer extends Controller
 {
@@ -114,7 +113,19 @@ class AdmissionOfficer extends Controller
 
     public function pg_coord_approved_recommendation_list(Request $request)
     {
-         $applications = Application::where('coord_recommendation', 10)->latest()->get()?:null;
+        $applications = null;
+        if ($request->has('deptName') && $request->filled('deptName')) {
+            $dept = $this->get_dept_given_deptName($request->deptName);
+            $programmes = $this->get_progs_given_deptID($dept->id);
+            $applications = Application::where('coord_recommendation', 10)
+            ->join('application_assessment', function($join) use($programmes){
+                $join->on('applications.id', '=', 'application_assessment.application_id')
+            ->whereIn('application_assessment.programme_id',$programmes);
+            })->select('applications.*')
+            ->latest()->get()?:null;
+        }else{
+            $applications = Application::where('coord_recommendation', 10)->latest()->get()?:null;
+        }
 
         try {
 
@@ -136,7 +147,19 @@ class AdmissionOfficer extends Controller
 
     public function pg_coord_disapproved_recommendation_list(Request $request)
     {
-         $applications = Application::where('coord_recommendation', -1)->latest()->get()?:null;
+        $applications = null;
+            if ($request->has('deptName') && $request->filled('deptName')) {
+                $dept = $this->get_dept_given_deptName($request->deptName);
+                $programmes = $this->get_progs_given_deptID($dept->id);
+                $applications = Application::where('coord_recommendation', -1)
+                ->join('application_assessment', function($join) use($programmes){
+                    $join->on('applications.id', '=', 'application_assessment.application_id')
+                ->whereIn('application_assessment.programme_id',$programmes);
+                })->select('applications.*')
+                ->latest()->get()?:null;
+            }else{
+                $applications = Application::where('coord_recommendation', -1)->latest()->get()?:null;
+            }
 
         try {
 
@@ -198,7 +221,7 @@ class AdmissionOfficer extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => 'all fields are required!'], 401);
         }
-       
+
         try {
             $getProgramme = Programme::find($request->programmeId);
             $dept = $this->get_dept_given_prog($getProgramme->department_id);
@@ -337,9 +360,30 @@ class AdmissionOfficer extends Controller
     }
 
 
-    public function admissionDenied(Request $request)
+    public function admissionPending(Request $request)
     {
-
+        $validator = Validator::make($request->all(), [
+            // 'applicant' => 'required',
+            'applicationId' => 'required',
+            'deny_reason'=>'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Application required'], 401);
+        }
+        $application = Application::find($request->applicationId);
+        $application->status = 'pending';
+        $application->deny_reason = $request->deny_reason ;
+        $application->save();
+        $notification = new Notification;
+        $notification->type = "Admisssion";
+        $notification->applicants = $application->applicant_id;
+        $data = [
+            "deny_reason"=>$request->deny_reason,
+            "type"=>"Admission",
+        ];
+        $notification->data = $data;
+        $notification->save();
+        return response()->json(['msg'=>'success' , 'value'=> "Admission Pending"]);
     }
 
     public function getProgrammeForApprove(Request $request)
@@ -429,7 +473,7 @@ class AdmissionOfficer extends Controller
             if($record){
                  if($record->is_verified == 0){
                      $record->is_verified = 10;
-                     $record->semester_last_seen =  $this->settings($request)->semester_name; 
+                     $record->semester_last_seen =  $this->settings($request)->semester_name;
                      $record->session_last_seen = $this->settings($request)->session_name;
                      $record->save();
                     return response()->json(['Enable-status' => 'Lecturer Enabled']);}
@@ -446,7 +490,7 @@ class AdmissionOfficer extends Controller
     }
 
     public static  function settings2(){
-     
+
         $settings = Setting::orderBy('created_at')->get();
         return response()->json(['settings' => $settings ]);
     }

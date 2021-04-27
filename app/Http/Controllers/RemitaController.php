@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+
 
 class RemitaController extends Controller
 {
@@ -156,4 +158,25 @@ class RemitaController extends Controller
         event(new RemitaBank($transaction));
         return "OK";
     }
+
+    public function crossCheckPayment(Request $request)
+    {
+        ini_set('max_execution_time', 0);
+        $merchantId = "4161150426";
+        $apiKey = "258341";
+        $rrr = $request->rrr;
+       try {
+        $apiHash = hash('sha512', $rrr . $apiKey . $merchantId);
+        $response = Http::get('https://login.remita.net/remita/ecomm/' . $merchantId . '/' . $rrr . "/" . $apiHash . '/status.reg');
+        Log::info($response);
+        $data = $response->json();
+        $transaction = Transaction::where('rrr', $rrr)->first();
+        $transaction->amount = $data['amount'];
+        $transaction->save();
+        return response()->json(['msg'=>'success', 'value'=>'Payment cross checked']);
+       } catch (\Throwable $th) {
+           //throw $th;
+           return response()->jsom(['error'=>'Unable check transaction','msg'=>$th],401);
+       }
+        }
 }
