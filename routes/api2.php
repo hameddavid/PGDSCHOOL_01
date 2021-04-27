@@ -82,3 +82,6 @@ Route::any('/t', function(){
 
 Route::post('getFeeType', [PaymentHelper::class, 'getFeeType'])->middleware('auth:sanctum');
 Route::post('getAdmissionLetter', [ApplicantController::class] , 'getAdmissionLetter' );
+
+
+Route::get('testError', [PaymentController::class, 'createApplication'] );

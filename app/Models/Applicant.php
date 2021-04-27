@@ -14,7 +14,7 @@ class Applicant extends Model
     protected $guarded = [];
 
     public function transactions()
-    {               
-        return $this->morphToMany(Payment::class , 'transaction')->withPivot('id','status','amount','details','reference','transactionId','rrr','orderId');
+    {
+        return $this->morphToMany(Payment::class , 'transaction')->withPivot('id','status','amount','details','reference','transactionId','rrr','orderId','created_at','semester_name','session_name');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\RemitaBank;
 use App\Models\Payment;
 use App\Http\Controllers\PaymentController;
+use App\Models\Application;
 use App\Models\Transaction;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;

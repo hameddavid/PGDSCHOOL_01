@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\Users\AdmissionOfficer;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -42,7 +43,7 @@ class PaymentController extends Controller
     }
     public function createApplication(Request $request)
     {
-        $user = $request->user();
+            $user = $request->user();
         $application = new Application();
         $application->status = 'awaiting submission';
         $application->applicant_id = $user->id;
@@ -52,7 +53,7 @@ class PaymentController extends Controller
         $val = AdmissionOfficer::settings($request)->session_name;
         $application->application_number = "RUN/CPGS/".substr($val,2,2)."-". substr($val,7,2)."/".$application->id;
         $application->save();
-        
+
 
         //aplication refree
         DB::table('application_refree')->insert(['application_id' => $application->id]);
@@ -100,7 +101,10 @@ class PaymentController extends Controller
                 'amount' => $value['amount'],
                 'status' => 'pending',
                 'details' => $value['type'],
-                'orderId'=>$orderID
+                'orderId'=>$orderID,
+                'created_at'=>Carbon::now(),
+                // 'semester_name'=>
+                // 'session_name'=>
             ]);
         };
         $payment['orderId'] = $orderID;

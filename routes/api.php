@@ -121,6 +121,7 @@ Route::get('/check', function(Request $request){
 
 //send mail
 
+
 Route::post('/email', function(Request $request){
     // Notification::route('mail', 'abayomipaulhenryhill@yahoo.com')
     //         ->notify(new VerifyEmailNotification());
