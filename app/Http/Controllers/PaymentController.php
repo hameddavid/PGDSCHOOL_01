@@ -103,8 +103,8 @@ class PaymentController extends Controller
                 'details' => $value['type'],
                 'orderId'=>$orderID,
                 'created_at'=>Carbon::now(),
-                // 'semester_name'=>
-                // 'session_name'=>
+                'semester_name'=> AdmissionOfficer::settings($request)->semester_name,
+                'session_name'=> AdmissionOfficer::settings($request)->session_name
             ]);
         };
         $payment['orderId'] = $orderID;

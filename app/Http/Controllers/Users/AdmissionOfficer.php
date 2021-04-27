@@ -385,6 +385,7 @@ class AdmissionOfficer extends Controller
         $notification->save();
         return response()->json(['msg'=>'success' , 'value'=> "Admission Pending"]);
     }
+    
 
     public function getProgrammeForApprove(Request $request)
     {
