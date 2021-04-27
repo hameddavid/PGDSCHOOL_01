@@ -146,7 +146,10 @@ class PaymentController extends Controller
                 'amount' => $payment->amount,
                 'status' => 'pending',
                 'details' => $payment->type . '--' . ' ' . $payment->details,
-                'orderId'=>time()
+                'orderId'=>time(),
+                'created_at'=>Carbon::now(),
+                'semester_name'=> AdmissionOfficer::settings($request)->semester_name,
+                'session_name'=> AdmissionOfficer::settings($request)->session_name
             ]);
             $transaction = $Authuser->transactions()->where('payments.id', $payment->id)->select('transactions.*')->latest('id')->first();
             return response()->json(['msg' => 'success', 'value' => $transaction, 'info'=>'Transaction Initiated']);
