@@ -55,6 +55,7 @@ class AuthController extends Controller
 
     public function auto_login_staff(Request $request)
     {
+        
     $params = base64_decode($request->params);
     $a_params = explode("&", $params);
     $final = [];
