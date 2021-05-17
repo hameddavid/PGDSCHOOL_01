@@ -90,6 +90,7 @@ class BursaryController extends Controller
         $session = null;
         $transaction = null;
         if ($request->semester == null)
+        
         {$semester = AdmissionOfficer::settings($request)->semester_name;}else{$semester=$request->semester;}
         if ($request->session == null)
         {$session = AdmissionOfficer::settings($request)->session_name;}else{$session=$request->session;}
@@ -104,6 +105,17 @@ class BursaryController extends Controller
             $transaction = $this->sql_all_applicant_fee_paid('CAUTION',$semester,$session,$degree=$request->degree);
 
         }
+        else if($request->has('application_number') && $request->filled('application_number')){ 
+            $transaction =  DB::table('transactions')
+            ->select('transactions.rrr','payments.type','transactions.amount','transactions.status','payments.programme_type',
+            'applicants.email','applicants.mobile','applicants.surname','applicants.lastname')
+            ->join('applicants','transactions.transaction_id','applicants.id')
+            ->join('payments','transactions.payment_id','payments.id')
+            ->join('applications','applicants.id','applications.applicant_id')
+            ->where('applications.application_number',$request->application_number)
+            ->whereNotNull('transactions.rrr') 
+            ->orderBy('transactions.created_at')->get();
+        }
         else{
             $transaction = $this->sql_all_applicant_fee_paid(null,$semester,$session,$degree=$request->degree);
 
@@ -114,7 +126,7 @@ class BursaryController extends Controller
     }
 
 
-    
+
 
     public function sql_all_applicant_fee_paid($param1,$semester,$session,$degree)
     {

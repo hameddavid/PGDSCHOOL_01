@@ -26,7 +26,7 @@ class AdmissionOfficer extends Controller
 
 
     public static  function settings($request){
-        if ($request->has('session') && $request->has('semester')){
+        if ($request->has('session') && $request->filled('session') && $request->has('semester') && $request->filled('semester')){
             $settings = Setting::where('semester_name', $request->semester)->where('session_name',$request->session)->first();
             return $settings;
         }
@@ -385,7 +385,7 @@ class AdmissionOfficer extends Controller
         $notification->save();
         return response()->json(['msg'=>'success' , 'value'=> "Admission Pending"]);
     }
-    
+
 
     public function getProgrammeForApprove(Request $request)
     {
@@ -491,7 +491,6 @@ class AdmissionOfficer extends Controller
     }
 
     public static  function settings2(){
-
         $settings = Setting::orderBy('created_at')->get();
         return response()->json(['settings' => $settings ]);
     }
