@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Transaction;
 use App\Exports\PaymentExport;
+use App\Exports\ApplicantPaymentReports;
 use App\Imports\PaymentImport;
 use App\Imports\ResultImport;
 use Illuminate\Support\Facades\DB;
@@ -164,4 +165,43 @@ class BursaryController extends Controller
             //throw $th;
         }
     }
+
+
+
+    public function applicants_payments_reports(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'session' => 'required',
+            'type'=>'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'session/type is required'], 401);
+        }
+
+        $check_session = str_replace('/','_',$request->session);
+       return Excel::download(new ApplicantPaymentReports($request->session, $request->type), "{$check_session}_{$request->type}_REPORT.xlsx");
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

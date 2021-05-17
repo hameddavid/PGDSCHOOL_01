@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::any("paymentTypes",[PaymentHelper::class , 'paymentTypes']);
 Route::any('/upload/fee/categories', [BursaryController::class , 'uploadFeeCategories']);
+Route::any('/applicants/payments/reports', [BursaryController::class , 'applicants_payments_reports']);
 
 Route::post('/all/applicants/payments', [BursaryController::class , 'all_applicant_fee_paid']);
 
