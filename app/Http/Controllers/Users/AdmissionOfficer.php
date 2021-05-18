@@ -495,6 +495,12 @@ class AdmissionOfficer extends Controller
         return response()->json(['settings' => $settings ]);
     }
 
+
+    
+
+
+
+
 }
 
 

@@ -108,8 +108,11 @@ class BursaryController extends Controller
         }
         else if($request->has('application_number') && $request->filled('application_number')){ 
             $transaction =  DB::table('transactions')
-            ->select('transactions.rrr','payments.type','transactions.amount','transactions.status','payments.programme_type',
-            'applicants.email','applicants.mobile','applicants.surname','applicants.lastname')
+            ->select('transactions.id','applicants.surname','applicants.firstname',
+            'applicants.lastname','applications.application_number',
+            'transactions.rrr','payments.type',
+            'transactions.amount','transactions.status','payments.programme_type',
+            'applicants.email','applicants.mobile')
             ->join('applicants','transactions.transaction_id','applicants.id')
             ->join('payments','transactions.payment_id','payments.id')
             ->join('applications','applicants.id','applications.applicant_id')
@@ -135,10 +138,14 @@ class BursaryController extends Controller
 
             if($param1 == null){
                 return  DB::table('transactions')
-                ->select('transactions.rrr','payments.type','transactions.amount','transactions.status','payments.programme_type',
-                'applicants.email','applicants.mobile','applicants.surname','applicants.lastname')
+                ->select('transactions.id','applicants.surname','applicants.firstname',
+                'applicants.lastname','applications.application_number',
+                'transactions.rrr','payments.type',
+                'transactions.amount','transactions.status','payments.programme_type',
+                'applicants.email','applicants.mobile')
                 ->join('applicants','transactions.transaction_id','applicants.id')
                 ->join('payments','transactions.payment_id','payments.id')
+                ->join('applications','applicants.id','applications.applicant_id')
                 ->where('transactions.semester_name',$semester)
                 ->where('transactions.session_name',$session)
                 ->whereNotNull('transactions.rrr') 
@@ -150,10 +157,14 @@ class BursaryController extends Controller
     
             
           return  DB::table('transactions')
-            ->select('transactions.rrr','payments.type','transactions.amount','transactions.status','payments.programme_type',
-            'applicants.email','applicants.mobile','applicants.surname','applicants.lastname')
+            ->select('transactions.id','applicants.surname','applicants.firstname',
+            'applicants.lastname','applications.application_number',
+            'transactions.rrr','payments.type',
+            'transactions.amount','transactions.status','payments.programme_type',
+            'applicants.email','applicants.mobile')
             ->join('applicants','transactions.transaction_id','applicants.id')
             ->join('payments','transactions.payment_id','payments.id')
+            ->join('applications','applicants.id','applications.applicant_id')
             ->where('payments.type', $param1)->where('transactions.semester_name',$semester)
             ->where('transactions.session_name',$session)->whereNotNull('transactions.rrr')
             ->orderBy('transactions.created_at')

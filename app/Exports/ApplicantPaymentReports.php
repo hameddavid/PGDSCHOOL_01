@@ -25,9 +25,11 @@ class ApplicantPaymentReports implements FromCollection, WithHeadings
     {
        
          $report = DB::table('transactions')
-        ->select('transactions.id','transactions.rrr','payments.type',
+        ->select('transactions.id','applicants.surname','applicants.firstname',
+        'applicants.lastname','applications.application_number',
+        'transactions.rrr','payments.type',
         'transactions.amount','transactions.status','payments.programme_type',
-        'applicants.email','applicants.mobile','applicants.surname','applicants.lastname')
+        'applicants.email','applicants.mobile')
         ->join('applicants','transactions.transaction_id','applicants.id')
         ->join('payments','transactions.payment_id','payments.id')
         ->join('applications','applicants.id','applications.applicant_id')
@@ -45,15 +47,18 @@ class ApplicantPaymentReports implements FromCollection, WithHeadings
     {
         return [
             'ID',
+            'SURNAME',
+            'FIRST NAME',
+            'LAST NAME',
+            'APPLICATION NO',
             'RRR',
             'TYPE',
             'AMOUNT',
             'STATUS',
-            'PROGRAMME',
+            'DEGREE',
             'EMAIL',
             'MOBILE',
-            'SURNAME',
-            'LAST NAME',
+          
         ];
     }
 

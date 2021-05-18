@@ -8,6 +8,7 @@ use App\Http\Controllers\Users\BursaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 Route::any("paymentTypes",[PaymentHelper::class , 'paymentTypes']);
 Route::any('/upload/fee/categories', [BursaryController::class , 'uploadFeeCategories']);
 Route::any('/applicants/payments/reports', [BursaryController::class , 'applicants_payments_reports']);
