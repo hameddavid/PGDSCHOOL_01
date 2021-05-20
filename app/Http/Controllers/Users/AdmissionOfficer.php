@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Jobs\AdmissionStatusMailJob;
 use App\Models\Notification;
+use App\Imports\ResultImport;
+use App\Imports\CourseImport;
+use App\Imports\CoursesImport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class AdmissionOfficer extends Controller
 {
@@ -496,8 +501,78 @@ class AdmissionOfficer extends Controller
     }
 
 
-    
+    public function uploadResult(Request $request)
+    {
+        $validator = Validator::make($request->all(), [ 'result' => 'required']);
+        if ($validator->fails()) {
+            return response()->json(['error' => 'select proper excel file to import'], 401);
+        }
+       $data =  Excel::toArray(new ResultImport, request()->file('result'));
+        dd($data[0]);
+        return response()->json(['success' => 'fee uploaded successfully'], 201);
+    }
 
+
+    public function import_courses(Request $request){
+        $validator = Validator::make(
+            [ 'courses'      => $request->courses,
+                'extension' => strtolower($request->courses->getClientOriginalExtension())],
+            [ 'courses'          => 'required',
+                'extension'      => 'required|in:csv,xlsx,xls' ]
+        );
+        if ($validator->fails()) {
+            return response()->json(['error' => 'select proper excel file to import'], 401);
+        }
+        
+       $data =  Excel::toArray(new CourseImport, request()->file('courses'));
+       try {
+        foreach($data[0] as $row){
+            if (strlen(ltrim(rtrim($row['course_code']))) < 7) {
+                return response()->json(['error' => 'Error course code not correct', 'th' => $th], 401);
+            }
+            DB::table('courses')->insertOrIgnore([
+            'id'=> substr(ltrim(rtrim($row['course_code'])), 0,7)."*".substr($this->settings($request)->session_name, 0,4)."0901",
+            'code'=> $row['course_code'],
+            'description'=> $row['description'],
+            'deleted'=> "N",
+            ]);
+            }
+            return response()->json(['success' => 'Course uploaded successfully'], 201);
+       } catch (\Throwable $th) {
+        return response()->json(['error' => 'Error Uploading Courses', 'th' => $th], 401);
+
+       }
+        
+       
+   
+    }
+
+
+
+    
+    public function create_course(Request $request){
+        $validator = Validator::make($request->all(),
+            [ 'code' => 'required|min:7','desc'=>'required'] );
+        if ($validator->fails()) {
+            return response()->json(['error' => 'All fields are required or course code error!'], 401);
+        }
+        
+       try {
+            DB::table('courses')->insertOrIgnore([
+            'id'=> substr(ltrim(rtrim($request->code)), 0,7)."*".substr($this->settings($request)->session_name, 0,4)."0901",
+            'code'=> $request->code,
+            'description'=> $request->desc,
+            'deleted'=> "N",
+            ]);
+          
+            return response()->json(['success' => 'Course created successfully'], 201);
+       } catch (\Throwable $th) {
+        return response()->json(['error' => 'Error creating Course', 'th' => $th], 401);
+
+       }
+        
+       
+    }
 
 
 

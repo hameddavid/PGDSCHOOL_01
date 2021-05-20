@@ -9,7 +9,6 @@ use App\Models\Transaction;
 use App\Exports\PaymentExport;
 use App\Exports\ApplicantPaymentReports;
 use App\Imports\PaymentImport;
-use App\Imports\ResultImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -67,23 +66,11 @@ class BursaryController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => 'select proper excel file to import'], 401);
         }
+        
         Excel::import(new PaymentImport, request()->file('fee'));
 
         return response()->json(['success' => 'fee uploaded successfully'], 201);
     }
-
-
-    public function uploadResult(Request $request)
-    {
-        $validator = Validator::make($request->all(), [ 'result' => 'required']);
-        if ($validator->fails()) {
-            return response()->json(['error' => 'select proper excel file to import'], 401);
-        }
-       $data =  Excel::toArray(new ResultImport, request()->file('result'));
-        dd($data[0]);
-        return response()->json(['success' => 'fee uploaded successfully'], 201);
-    }
-
 
     public function all_applicant_fee_paid(Request $request)
     {
