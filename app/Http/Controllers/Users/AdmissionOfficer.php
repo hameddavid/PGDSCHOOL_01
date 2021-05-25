@@ -528,8 +528,8 @@ class AdmissionOfficer extends Controller
        try {
         foreach($data[0] as $row){
             if (strlen(ltrim(rtrim($row['course_code']))) < 7) {
-                return response()->json(['error' => 'Error course code not correct', 'th' => $th], 401);
-            }
+                $failed_data[] = $row;
+                continue;}
             DB::table('courses')->insertOrIgnore([
             'id'=> substr(ltrim(rtrim($row['course_code'])), 0,7)."*".substr($this->settings($request)->session_name, 0,4)."0901",
             'code'=> $row['course_code'],
@@ -537,7 +537,7 @@ class AdmissionOfficer extends Controller
             'deleted'=> "N",
             ]);
             }
-            return response()->json(['success' => 'Course uploaded successfully'], 201);
+            return response()->json(['success' => 'Course uploaded successfully','failed'=>$failed_data], 201);
        } catch (\Throwable $th) {
         return response()->json(['error' => 'Error Uploading Courses', 'th' => $th], 401);
 
