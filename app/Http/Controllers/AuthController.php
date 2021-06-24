@@ -25,7 +25,7 @@ class AuthController extends Controller
     {
         $applicant = Applicant::where('token', $request->token)->where('email', $request->email)->first();
         if ($applicant) {
-            
+
             return response()->json(['msg'=>'success', 'value'=>true, 'info'=>'Allow Reset']);
         }else{
             return response()->json(['msg'=>'failed', 'value'=>false, 'info'=>'Reset Denied']);
@@ -37,9 +37,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'password' => 'required|confirmed',
+            'token'=>"required",
+            'email'=>'required'
         ]);
-        $user = $request->user();
-        $applicant = Applicant::find($user->id);
+        // $user = $request->user();
+        $applicant = Applicant::where('token', $request->token)->where('email', $request->email)->first();
         $applicant->password = Hash::make($request->password);
         $applicant->save();
             return response()->json(['msg'=>'success','value'=>'Password Changed']);

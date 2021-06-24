@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
@@ -29,6 +30,10 @@ use Illuminate\Validation\ValidationException;
 |
 */
 
+//ForgotPassword
+Route::post('forgotPassword',[AuthController::class, 'ForgotPassword'])->middleware('guest');
+Route::post('resetPassword',[AuthController::class, "ResetPassword"])->middleware('guest');
+//ForgotPassword
 
 
 Route::post('testt', [PaymentController::class ,'createApplication']);
