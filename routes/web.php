@@ -1,12 +1,11 @@
 <?php
 
+use App\Http\Controllers\StudentController;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Users\AdmissionOfficer;
-use App\Models\Application;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -29,13 +28,15 @@ use App\Models\Application;
 //     $application->save();
 //     //return $app;
 //    }
-//    return $apps; 
+//    return $apps;
 // });
 
 Route::get('/', function (Request $request) {
     return "hello";
     return view('welcome');
 });
+
+
 
 Route::get('g', function(){
     $n = Notification::find(1);
@@ -50,3 +51,4 @@ Route::get("adminTest", function(){
 Route::get("email", [AdmissionOfficer::class, 'admissionApproved']);
 
 
+// Route::get("manual" , [StudentController::class, 'manual']);

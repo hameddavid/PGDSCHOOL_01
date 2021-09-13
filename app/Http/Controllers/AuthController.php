@@ -7,6 +7,7 @@ use App\Models\Applicant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -19,7 +20,9 @@ class AuthController extends Controller
         $applicant->token = $token;
         $applicant->save();
         Mail::to($applicant->email)->send(new ForgotPassword($token));
+        return response()->json(['msg'=>'success','value'=>true, 'info'=>'Reset token sent']);
        }
+       return response()->json(['msg'=>'failed', ' value' =>false, 'info'=>"This email do not exist in our records"]);
     }
     public function allowReset(Request $request)
     {
@@ -31,19 +34,25 @@ class AuthController extends Controller
             return response()->json(['msg'=>'failed', 'value'=>false, 'info'=>'Reset Denied']);
         }
     }
-
     //protected with auth
     public function ResetPassword(Request $request)
     {
-        $request->validate([
-            'password' => 'required|confirmed',
+        $validator = Validator::make($request->all(), [
+            'password' => 'required',
             'token'=>"required",
             'email'=>'required'
         ]);
+
+        if($validator->fails()){
+            return response()->json(["msg" =>"failed", "valid" =>false, "info"=>"All fields are required"]);
+        }
         // $user = $request->user();
         $applicant = Applicant::where('token', $request->token)->where('email', $request->email)->first();
+        if(!$applicant){
+            return response()->json(['msg'=>'failed', 'value'=>false, 'info'=>"Invalid token supplied"]);
+        }
         $applicant->password = Hash::make($request->password);
         $applicant->save();
-            return response()->json(['msg'=>'success','value'=>'Password Changed']);
+        return response()->json(['msg'=>'success','value'=>true, 'info'=>'Password Changed']);
     }
 }

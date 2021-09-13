@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\Users\AdmissionOfficer;
+use App\Models\StudentTransaction;
 use Carbon\Carbon;
 
 class PaymentController extends Controller
@@ -87,26 +88,52 @@ class PaymentController extends Controller
     }
     public function studentInitTransactions(Request $request)
     {
+        $serviceTypeId = [
+            "PGD"=>"7357631130",
+            "M.A"=>"7357430083",
+            "MBA"=>"7357499581",
+            "MPil"=>"7357444054",
+            "MSC"=>"7357578394",
+            "PHD"=>"7357567830"
+        ];
         $orderID = time();
-        $payment = null;
-        $amount = null;
-        foreach ($request->payments as $key => $value) {
-            if($key == 0){
-                $payment = Payment::find($value['id']);
-            }
-            $Authuser = $request->user();
-            $amount  = $amount + $value['amount'] ;
-            // $payment = Payment::find($request->payment);
-            $Authuser->transactions()->attach($value['id'], [
-                'amount' => $value['amount'],
-                'status' => 'pending',
-                'details' => $value['type'],
-                'orderId'=>$orderID,
-                'created_at'=>Carbon::now(),
-                'semester_name'=> AdmissionOfficer::settings($request)->semester_name,
-                'session_name'=> AdmissionOfficer::settings($request)->session_name
-            ]);
-        };
+        $payment_payload = $request->payment;
+        $amount = $request->total;
+        $studentTransaction = new StudentTransaction;
+        $studentTransaction->orderId = $orderID;
+        $studentTransaction->payment_payload = $payment_payload;
+        $studentTransaction->amount = $amount;
+        $studentTransaction->user_id = Auth::user()->id;
+        $studentTransaction->status = "pending";
+        $studentTransaction->save();
+        return response()->json(["value"=>[
+            "orderId"=>$orderID,
+            "amount"=>$amount,
+            "serviceType_id"=>$serviceTypeId[$request->progType]
+        ]]);
+        // for ($i=0; $i < count($request->optionalPayment); $i++) {
+
+        // }
+
+        // foreach ($request->payments as $key => $value) {
+        //     if($key == 0){
+        //         $payment = Payment::find($value['id']);
+        //     }
+        //     $Authuser = $request->user();
+        //     $amount  = $amount + $value['amount'] ;
+        //     // $payment = Payment::find($request->payment);
+        //     $Authuser->transactions()->attach(
+        //         $value['id'],
+        //         [
+        //         'amount' => $value['amount'],
+        //         'status' => 'pending',
+        //         'details' => $value['type'],
+        //         'orderId'=>$orderID,
+        //         'created_at'=>Carbon::now(),
+        //         'semester_name'=> AdmissionOfficer::settings($request)->semester_name,
+        //         'session_name'=> AdmissionOfficer::settings($request)->session_name
+        //     ]);
+        // };
         $payment['orderId'] = $orderID;
         $payment['amount']=$amount;
         return response()->json(["value"=>$payment]);
@@ -115,23 +142,31 @@ class PaymentController extends Controller
     }
     public function saveStudentRRR(Request $request)
     {
-        $transactions = DB::table('transactions')->where('orderId',$request->orderId)->get();
-        foreach ($transactions as $key => $value) {
-            // return response()->json([$value]);
-            DB::table('transactions')->where('id',$value->id)->update([
-                'RRR'=>$request->RRR
-            ]);
-        }
+
+        $transaction = StudentTransaction::where("orderId", $request->orderId)->first();
+        $transaction->RRR = $request->RRR;
+        $transaction->save();
+        return response()->json(['info'=>'RRR saved', 'value'=>true]);
+
+        // foreach ($transactions as $key => $value) {
+        //     // return response()->json([$value]);
+        //     DB::table('transactions')->where('id',$value->id)->update([
+        //         'RRR'=>$request->RRR
+        //     ]);
+        // }
         return response()->json(['info'=>'RRR saved', 'value'=>true]);
     }
     public function studentUpdateTransaction(Request $request)
     {
-        $transactions = DB::table('transactions')->where('rrr',$request->rrr)->get();
-        foreach ($transactions as $key => $value) {
-            DB::table('transactions')->where('id',$value->id)->update([
-                'status'=>'SUCCESS'
-            ]);
-        }
+        $transaction = StudentTransaction::where('rrr',$request->rrr)->first();
+        $transaction->status = "SUCCESS";
+        $transaction->save();
+        return response()->json(['value'=>true]);
+        // foreach ($transactions as $key => $value) {
+        //     DB::table('transactions')->where('id',$value->id)->update([
+        //         'status'=>'SUCCESS'
+        //     ]);
+        // }
     }
     public function initTransaction(Request $request)
     {

@@ -131,25 +131,29 @@ class PaymentHelper extends Controller
         try {
             // $currentBill = DB::table('billings')->select('amount AS Bill')->where('session', $this->settings($request)->session_name)
             // ->where('prog_type', $request->progType)->where('id',$request->progId)->get()->toArray();
-            $currentBill = Billing::where('programme_id',$request->progId)->where('session',$this->settings($request)->session_name)->first();
+
+
+            // ************************************** NOTE TO CHANGE THIS SESSION BACK *************************************
+           // $currentBill = Billing::where('programme_id',$request->progId)->where('session',$this->settings($request)->session_name)->first();
+              $currentBill = Billing::where('prog_type',$request->progType)->first();
             // return  $this->settings($request)->session_name;
              $x =  explode(',', $currentBill->payment_percentage);
              $percentage = ['first_payment'=>$x[0], 'final_payment'=>$x[1]];
 
             $compulsaryPayment = DB::table('payments')
             ->select('payments.amount','payments.type','payments.installment','payments.id')
-            ->where('programme_id', $request->progId)
+            // ->where('programme_id', $request->progId)
             ->where('programme_type', $request->progType)
             ->where('optional',0)
             ->where('payments.status', 'STUDENT')
-            ->where('payments.session', $this->settings($request)->session_name)
+            ->where('payments.session', '2020/2021')
             ->get()->toArray();
             $optionalPayment = DB::table('payments')
             ->select('payments.amount','payments.type','payments.id')
-            ->where('programme_id', $request->progId)
+            // ->where('programme_id', $request->progId)
             ->where('programme_type', $request->progType)
             ->where('optional',1)
-            ->where('status', 'STUDENT')->where('payments.session', $this->settings($request)->session_name)
+            ->where('status', 'STUDENT')->where('payments.session', '2020/2021')
             ->get()->toArray();
             $result = ['compulsary'=> $compulsaryPayment, 'optional'=>$optionalPayment , 'percentage'=>$percentage];
             return $result;
